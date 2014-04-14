@@ -1,0 +1,72 @@
+1.  El cable de energía esta bien conectado
+	- PC Escritorio
+		- Su equipo enciende? <NO>
+			- Utiliza alguna extensión o regleta? <NO>
+			- Utiliza alguna extensión o regleta? <SI>
+				- Verifique si su extensión esta bien conectada? <SI>
+				- Verifique si su extensión esta bien conectada? <NO>
+					//Ajustemoslo, verifiquemos de nuevo...
+					??El cable de energía estaba mal conectado...
+					@Su equipo enciende?
+				- Verifique que la extensión este encenda (ON)? <SI>
+				- Verifique que la extensión este encenda (ON)? <NO>
+					//Verifiquemos de nuevo...
+					??El cable de energía estaba mal conectado...
+					@Su equipo enciende?
+			- Verifique que el cable de la PC este bien enchufado? <SI>
+			- Verifique que el cable de la PC este bien enchufado? <NO>
+				//Corrija, y verifiquemos de nuevo...
+				??El cable de energía estaba mal conectado...
+				@Su equipo enciende?
+			- Has intentado conectar otro dispositivo (p.e. un Radio)? <SI>
+				- El otro dispositivo enciende? <SI>
+				- El otro dispositivo enciende? <NO>
+			- Has intentado conectar otro dispositivo (p.e. un Radio)? <NO>
+			- Has intentado cambiar el cable de la PC por otro <SI>
+				//Verifica la garantia de tu equipo o vé pensando en un técnico que te ayude a chequear la fuente de poder de tu máquina.
+			- Has intentado cambiar el cable de la PC por otro <NO>
+				//Intentalo, y verifiquemos de nuevo...
+				??El cable de energía estaba mal conectado...
+				@Su equipo enciende?
+		- Su equipo enciende? <SI>
+			//Suertudo... no es la energía
+	- Laptop
+		- Su equipo enciende? <NO>
+			- Aún funciona la batería de su portatil? <NO>
+			- Aún funciona la batería de su portatil? <SI>
+				- El indicador de bateria en su portatil da la señal de falta de carga? <NO>
+				- El indicador de bateria en su portatil da la señal de falta de carga? <SI>
+					- Tiene conectado el cargador de su portatil? <SI>
+					- Tiene conectado el cargador de su portatil? <NO>
+						//Conecte el cargador, verifiquemos de nuevo...
+						??La batería esta descargada...
+						@Su equipo enciende?
+			- Utiliza alguna extensión o regleta? <NO>
+			- Utiliza alguna extensión o regleta? <SI>
+				- Verifique si su extensión esta bien conectada? <SI>
+				- Verifique si su extensión esta bien conectada? <NO>
+					//Ajustemoslo, verifiquemos de nuevo...
+					??El cable de energía estaba mal conectado...
+					@Su equipo enciende?
+				- Verifique que la extensión este encenda (ON)? <SI>
+				- Verifique que la extensión este encenda (ON)? <NO>
+					//Verifiquemos de nuevo...
+					??El cable de energía estaba mal conectado...
+					@Su equipo enciende?
+			- Verifique que el cable de la fuente de poder del equipo este bien enchufado? <SI>
+			- Verifique que el cable de la fuente de poder del equipo este bien enchufado? <NO>
+				//Corrija, y verifiquemos de nuevo...
+				??El cable de energía estaba mal conectado...
+				@Su equipo enciende?
+			- Has intentado conectar otro dispositivo (p.e. un Radio)? <SI>
+				- El otro dispositivo enciende? <SI>
+				- El otro dispositivo enciende? <NO>
+			- Has intentado conectar otro dispositivo (p.e. un Radio)? <NO>
+			- Has intentado cambiar el cable de la PC por otro <SI>
+				//Verifica la garantia de tu equipo o vé pensando en un técnico que te ayude a chequear la fuente de poder de tu máquina.
+			- Has intentado cambiar el cable de la PC por otro <NO>
+				//Intentalo, y verifiquemos de nuevo...
+				??El cable de energía estaba mal conectado...
+				@Su equipo enciende?
+		- Su equipo enciende? <SI>
+			//Suertudo... no es la energía
