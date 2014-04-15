@@ -165,6 +165,7 @@
 (defrule EXTENSION-MAL-CONECTADA
    ?hecho <- (regleta_bien_conectada No)
    ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
+   ?arranque <- (arranque)
 =>
    (printout t "R// POSIBLE CAUSA, EXTENSION MAL CONECTADA" crlf)
    (printout t "CONECTE BIEN SU REGLETA E INTENTE DE NUEVO" crlf)
@@ -172,30 +173,70 @@
    (assert (CORREGIDO Si))
    (bind ?*mensaje* "LA EXTENSION O REGLETA ESTABA MAL CONECTADA")
    (retract ?hecho_actual)
-   (retract 1)
+   (retract ?arranque)
    (retract ?hecho)
    (assert (arranque))
 )
 
 (defrule REGLETA-ENCENDIDA ;regla para validar que la regleta este encendida
-   (EXTENSION (v_existe Si) (v_tipo Regleta))
+   ?hecho_extension <- (EXTENSION (v_tipo Regleta))
+   ?hecho <- (regleta_encendida)
 =>
-   (printout t "VERIFIQUE QUE LA REGLETA ESTE ACTIVA <ON> ¿LO ESTA?" crlf)
-   (assert (regleta_encendida (read)))
+   (printout t "VERIFIQUE QUE LA REGLETA ESTE ACTIVA <ON> ¿LO ESTA? (Si/No)" crlf)
+   (bind ?estaon (read))
+   (if (eq ?estaon No)
+      then
+	     (assert (regleta_encendida No))
+      else
+	     (assert (cable-poder))
+   )
 )
 
 (defrule REGLETA-APAGADA
-;LA REGLETA NO ESTA ENCENDIDA;SOLUCION
-   (regleta_encendida No)
+   ?hecho <- (regleta_encendida No)
+   ?hecho_extension <- (EXTENSION (v_tipo Regleta))
+   ?hecho_actual <- (EQUIPO (v_enciende No))
+   ?arranque <- (arranque)
 =>
    (printout t "R// POSIBLE CAUSA, REGLETA APAGADA" crlf)
    (printout t "ACTIVE SU REGLETA E INTENTE DE NUEVO" crlf)
-;   (bind ?*corregido* 1)
    (assert (CORREGIDO Si))
    (bind ?*mensaje* "LA REGLETA NO ESTABA ENCENDIDA")
-   (retract 5);esto se tiene que cambiar por una variable que tome el control del fact
-   (retract 2);esto se tiene que cambiar por una variable que tome el control del fact
-   (retract 1);esto se ti
+   (retract ?hecho)
+   (retract ?hecho_extension)
+   (retract ?hecho_actual)
+   (retract ?arranque)
+   (assert (arranque))
+)
+
+(defrule CABLE-PODER
+   ?hecho <- (cable-poder)
+=>
+   (printout t "VERIFIQUE EL CABLE QUE ALIMENTA LA FUENTE DE PODER, ESTA BIEN CONECTADO? (Si/No)" crlf)
+   (bind ?cablepoder (read))
+   (if (eq ?cablepoder No)
+      then
+	     (assert (cable-poder-mal-conectado))
+	  else
+	     (assert (conectar-otro-dispositivo))
+   )
+   (retract ?hecho)
+)
+
+(defrule CABLE-PODER-MAL-CONECTADO
+   ?hecho <- (cable-poder-mal-conectado)
+   ?hecho_extension <- (EXTENSION (v_tipo Regleta))
+   ?hecho_actual <- (EQUIPO (v_enciende No))
+   ?arranque <- (arranque)
+=>
+   (printout t "R// POSIBLE CAUSA, CABLE DE PODER MAL CONECTADO" crlf)
+   (printout t "CORRIJA EL PROBLEMA E INTENTE DE NUEVO" crlf)
+   (assert (CORREGIDO Si))
+   (bind ?*mensaje* "EL CABLE DE LA FUENTE DE PODER NO ESTABA BIEN CONECTADO")
+   (retract ?hecho)
+   (retract ?hecho_extension)
+   (retract ?hecho_actual)
+   (retract ?arranque)
    (assert (arranque))
 )
 
@@ -205,7 +246,7 @@
 (defrule CARGADOR-NO-CONECTADO "En caso el problema se por falta de carga"
    ?hecho <- (cargador-no-conectado)
    ?hecho_actual <- (EQUIPO (v_tipo Portatil) (v_enciende No) (v_bateria_funciona Si) (v_bateria_sin_carga Si))
-   (cargador-conectado No)
+   ?arranque <- (arranque)
 =>
    (printout t "R// POSIBLE CAUSA, REQUIERE CARGADOR" crlf)
    (printout t "CONECTE CARGADOR E INTENTE DE NUEVO" crlf)
@@ -213,10 +254,7 @@
    (bind ?*mensaje* "EL EQUIPO REQUERIA CARGADOR")
    (retract ?hecho_actual)
    (retract ?hecho)
-   (retract 1)
-;   (retract 5);esto se tiene que cambiar por una variable que tome el control del fact
-;   (retract 2);esto se tiene que cambiar por una variable que tome el control del fact
-;   (retract 1);esto se tiene que cambiar por una variable que tome el control del fact
+   (retract ?arranque)
    (assert (arranque))
 )
 
@@ -231,4 +269,5 @@
    (printout t ?*mensaje* crlf)
    (printout t "GRACIAS POR USAR NUESTRO SISTEMA" crlf "SALUDOS" crlf)
    (printout t "=================================================================" crlf)
+;   (reset)
 )
