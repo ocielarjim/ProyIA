@@ -32,7 +32,7 @@
 			//Suertudo... no es la energía
 	- Laptop
 		- Su equipo enciende? <NO>
-			- Aún funciona la batería de su portatil? <NO>
+			- Aún funciona la batería de su portatil? <NO> 
 			- Aún funciona la batería de su portatil? <SI>
 				- El indicador de bateria en su portatil da la señal de falta de carga? <NO>
 				- El indicador de bateria en su portatil da la señal de falta de carga? <SI>
