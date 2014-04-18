@@ -26,7 +26,10 @@
 		- La pantalla enciende pero deja un fondo oscuro y no muestra imagen? <NO>
 			//eso quiere decir que la pantalla pareciera como desconectada o apagada
 			- En su lugar, el equipo lanza beeps (o pitidos) en senal de que algo no esta bien y luego se apaga de forma inmediata? <SI>
-				@La memoria RAM no funciona
+				- Has remplazado la Memoria RAM pidiendo la ayuda a un tecnico? <NO>
+					@te recomendamos hacerlo, debido a que todo apunta a que tu PC sufre problemas de RAM
+				- Has remplazado la Memoria RAM pidiendo la ayuda a un tecnico? <SI>
+					@Tu PC tiene problemas con el MotherBoard, y es necesario que sea verificado por un tecnico.
 			- En su lugar, el equipo lanza beeps (o pitidos) en senal de que algo no esta bien y luego se apaga de forma inmediata? <NO>
 				* La luz del equipo que indica la lectura y escritura al disco duro palpita? <NO>
 				* La luz del equipo que indica la lectura y escritura al disco duro palpita? <SI>
@@ -60,4 +63,5 @@
 				  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <NO>
 				* En ocasiones anteriores, notaba lentitud al usar el equipo
 				  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <SI>
+					//Tarea Compleja, debes pedir ayuda para que revisen tu Motherboard o tu Procesador
 					- @El procesador no funciona
