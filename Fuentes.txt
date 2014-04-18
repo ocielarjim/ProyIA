@@ -1,0 +1,5 @@
+FUENTES:
+Problemas de RAM: http://www.taringa.net/posts/info/8767321/Sintomas-de-una-memoria-RAM-danada-Como-testearla.html
+Problemas con DiscoDuro: http://www.rolandovera.com/2008/11/05/sintomas-para-saber-que-un-disco-duro-esta-malo/
+Problemas con MotherBoard: http://www.taringa.net/posts/apuntes-y-monografias/14972398/Como-saber-si-una-tarjeta-madre-esta-danada-o-defectuosa.html
+Problemas de Procesador: http://www.perelescomputerservices.com/2012/03/como-saber-si-el-procesador-cpu-esta.html#axzz2zCAhabHf

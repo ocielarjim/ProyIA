@@ -2,15 +2,26 @@
 	- La pantalla se enciende mostrando los simbolos habituales e imagenes que se activan al recien encender? <SI>
 		- Esa misma pantalla demora mas de 10 segundos en pasar al arranque de Windows. <NO>
 		- Esa misma pantalla demora mas de 10 segundos en pasar al arranque de Windows. <SI>
-			- Escucha ruido (un ruido parecido al choque de 2 metales finos)? <NO>
-			- Escucha ruido (un ruido parecido al choque de 2 metales finos)? <SI>
-				- En ocasiones le pide realizar un escaneo de su disco duro, o ve la palabra clave "ScanDisk". <NO>
-				- En ocasiones le pide realizar un escaneo de su disco duro, o ve la palabra clave "ScanDisk". <SI>
-					* En ocasiones anteriores, notaba lentitud al usar el equipo
-					  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <NO>
-					* En ocasiones anteriores, notaba lentitud al usar el equipo
-					  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <SI>
-						@El disco duro no funciona
+			- Verifique que en su equipo no este introducido un dispositivo portatil (por ejemplo, memorias USB, CD o Floppy) <SI>
+				- Retire cualquier dispositivo portatil e intente de nuevo
+				- Obtuvo el mismo resultado? <NO>
+					@posible causa un dispositivo interferia con el arranque de windows.
+				- Obtuvo el mismo resultado? <SI>
+					@anote los mensajes lanzados por la BIOS.
+					@Es probable que deba reconfigurar la BIOS de su PC.
+					- Escucha ruido
+			- Verifique que en su equipo no este introducido un dispositivo portatil (por ejemplo, memorias USB, CD o Floppy) <NO>
+				- Escucha ruido (un ruido parecido al choque de 2 metales finos) dentro de su PC? <NO>
+					@Es probable que el problema se deba al arranque de Windows.
+				- Escucha ruido (un ruido parecido al choque de 2 metales finos) dentro de su PC? <SI>
+					- En ocasiones le pide realizar un escaneo de su disco duro, o ve la palabra clave "ScanDisk". <NO>
+						@Es probable que el problema se deba al arranque de Windows y posibles danos con tu Disco Duro.
+					- En ocasiones le pide realizar un escaneo de su disco duro, o ve la palabra clave "ScanDisk". <SI>
+						* En ocasiones anteriores, notaba lentitud al usar el equipo
+						  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <NO>
+						* En ocasiones anteriores, notaba lentitud al usar el equipo
+						  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <SI>
+							@El disco duro no funciona
 	- La pantalla se enciende mostrando los simbolos habituales e imagenes que se activan al recien encender (PostBIOS)? <NO>
 		- La pantalla enciende pero deja un fondo oscuro y no muestra imagen? <NO>
 			//eso quiere decir que la pantalla pareciera como desconectada o apagada
@@ -25,6 +36,7 @@
 					(en caso escritorio)
 						- Verifica que el cable de poder que alimenta al monitor este bien conectado, lo esta? <NO>
 						- Verifica que el cable de poder que alimenta al monitor este bien conectado, lo esta? <SI>
+							- Has intentado cambiar el cable de poder del monitor por otro <SI>
 							- Has intentado cambiar el cable de poder del monitor por otro <NO>
 								//Intentalo, y verifiquemos de nuevo...
 								??El cable de energía estaba mal conectado...
