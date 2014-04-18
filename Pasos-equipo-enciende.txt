@@ -1,0 +1,51 @@
+2. El equipo enciende <SI>
+	- La pantalla se enciende mostrando los simbolos habituales e imagenes que se activan al recien encender? <SI>
+		- Esa misma pantalla demora mas de 10 segundos en pasar al arranque de Windows. <NO>
+		- Esa misma pantalla demora mas de 10 segundos en pasar al arranque de Windows. <SI>
+			- Escucha ruido (un ruido parecido al choque de 2 metales finos)? <NO>
+			- Escucha ruido (un ruido parecido al choque de 2 metales finos)? <SI>
+				- En ocasiones le pide realizar un escaneo de su disco duro, o ve la palabra clave "ScanDisk". <NO>
+				- En ocasiones le pide realizar un escaneo de su disco duro, o ve la palabra clave "ScanDisk". <SI>
+					* En ocasiones anteriores, notaba lentitud al usar el equipo
+					  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <NO>
+					* En ocasiones anteriores, notaba lentitud al usar el equipo
+					  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <SI>
+						@El disco duro no funciona
+	- La pantalla se enciende mostrando los simbolos habituales e imagenes que se activan al recien encender (PostBIOS)? <NO>
+		- La pantalla enciende pero deja un fondo oscuro y no muestra imagen? <NO>
+			//eso quiere decir que la pantalla pareciera como desconectada o apagada
+			- En su lugar, el equipo lanza beeps (o pitidos) en senal de que algo no esta bien y luego se apaga de forma inmediata? <SI>
+				@La memoria RAM no funciona
+			- En su lugar, el equipo lanza beeps (o pitidos) en senal de que algo no esta bien y luego se apaga de forma inmediata? <NO>
+				* La luz del equipo que indica la lectura y escritura al disco duro palpita? <NO>
+				* La luz del equipo que indica la lectura y escritura al disco duro palpita? <SI>
+					//deja pasar al menos 5 minutos y espera hasta que el sistema operativo haya cargado...
+					(en caso portatil)
+						* Has intentado conectar otro monitor a la PC? (se repiten las mismas opciones que en escritorio)
+					(en caso escritorio)
+						- Verifica que el cable de poder que alimenta al monitor este bien conectado, lo esta? <NO>
+						- Verifica que el cable de poder que alimenta al monitor este bien conectado, lo esta? <SI>
+							- Has intentado cambiar el cable de poder del monitor por otro <NO>
+								//Intentalo, y verifiquemos de nuevo...
+								??El cable de energía estaba mal conectado...
+								@Su equipo enciende?
+							- Verifica que el cable que va de la PC al monitor este bien conectado, lo esta? <NO>
+							- Verifica que el cable que va de la PC al monitor este bien conectado, lo esta? <SI>
+								* Has intentado conectar otro monitor a la PC? <SI>
+								* Has intentado conectar otro monitor a la PC? <NO>
+									- Puedes conseguir un monitor diferente? <NO>
+										@no podremos continuar hasta que lo hagas.
+									- Puedes conseguir un monitor diferente? <SI>
+										- Intenta conectar el monitor y presiona ok cuando culmines <OK>
+										- El nuevo monitor mostro imagen? <SI>
+											@es probable que sea el monior, intenta de nuevo
+										- El nuevo monitor mostro imagen? <NO>
+											@En estos casos recomendamos llamar a un tecnico
+		- La pantalla enciende pero deja un fondo oscuro y no muestra imagen? <SI>
+			* La luz del equipo que indica la lectura y escritura al disco duro palpita? <SI>
+			* La luz del equipo que indica la lectura y escritura al disco duro palpita? <NO>
+				* En ocasiones anteriores, notaba lentitud al usar el equipo
+				  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <NO>
+				* En ocasiones anteriores, notaba lentitud al usar el equipo
+				  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <SI>
+					- @El procesador no funciona

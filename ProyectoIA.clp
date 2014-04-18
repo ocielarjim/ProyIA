@@ -66,14 +66,36 @@
    (bind ?tipo (read))
    (printout t "TU EQUIPO ENCIENDE? (Si/No)" crlf)
    (assert (EQUIPO (v_tipo ?tipo) (v_enciende (read))))
-   (assert (bateria-funciona))
+   (assert (inicia-validacion))
 )
 
-; ===========================
+; ==============================
+; EN CASO DE SER PC ESCRITORIO
+; ==============================
+(defrule EQUIPO-ESCRITORIO
+   ?hecho <- (inicia-validacion)
+   ?hecho_actual <- (EQUIPO (v_tipo Escritorio) (v_enciende No))
+=>
+   (printout t "UTILIZA ALGUNA EXTENSION O REGLETA (Si/No)" crlf)
+   (bind ?existe (read))
+   (if (eq ?existe Si)
+      then
+         (printout t "QUE TIPO DE EXTENSION USA (Extension/Regleta)" crlf)
+         (bind ?tipo (read))
+         (assert (EXTENSION (v_existe ?existe) (v_tipo ?tipo)))
+         (assert (extension-bien-conectada))
+      else
+         (assert (cable-poder))
+		 (assert (sin-extension))
+   )
+   (retract ?hecho)
+)
+
+; ========================
 ; EN CASO DE SER LAPTOP
-; ===========================
-(defrule BATERIA-FUNCIONA
-   ?hecho <- (bateria-funciona)
+; ========================
+(defrule INICIA-VALIDACION
+   ?hecho <- (inicia-validacion)
    ?hecho_actual <- (EQUIPO (v_tipo Portatil) (v_enciende No))
 =>
    (printout t "AUN FUNCIONA LA BATERIA DE SU PORTATIL (Si/No)" crlf)
@@ -188,6 +210,10 @@
    ?hecho_extension <- (EXTENSION (v_tipo ?etipo))
    ?arranque <- (arranque)
 =>
+   (if (eq ?tipo Escritorio)
+      then
+         (bind ?tipo "PC de Escritorio")
+   )
    (printout t "R// POSIBLE CAUSA, " ?etipo" MAL CONECTADA" crlf)
    (printout t "CONECTE BIEN SU " ?etipo " E INTENTE ENCENDER DE NUEVO SU " ?tipo crlf)
 ; (bind ?*corregido* 1)

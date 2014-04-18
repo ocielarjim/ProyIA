@@ -32,7 +32,7 @@
 			//Suertudo... no es la energía
 	- Laptop
 		- Su equipo enciende? <NO>
-			- Aún funciona la batería de su portatil? <NO> 
+			- Aún funciona la batería de su portatil? <NO>
 			- Aún funciona la batería de su portatil? <SI>
 				- El indicador de bateria en su portatil da la señal de falta de carga? <NO>
 				- El indicador de bateria en su portatil da la señal de falta de carga? <SI>
@@ -58,10 +58,10 @@
 				//Corrija, y verifiquemos de nuevo...
 				??El cable de energía estaba mal conectado...
 				@Su equipo enciende?
+			- Has intentado conectar otro dispositivo (p.e. un Radio)? <NO>
 			- Has intentado conectar otro dispositivo (p.e. un Radio)? <SI>
 				- El otro dispositivo enciende? <SI>
 				- El otro dispositivo enciende? <NO>
-			- Has intentado conectar otro dispositivo (p.e. un Radio)? <NO>
 			- Has intentado cambiar el cable de la PC por otro <SI>
 				//Verifica la garantia de tu equipo o vé pensando en un técnico que te ayude a chequear la fuente de poder de tu máquina.
 			- Has intentado cambiar el cable de la PC por otro <NO>
