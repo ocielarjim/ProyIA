@@ -33,12 +33,14 @@
 									- En ocasiones su equipo se congela y debes reiniciar <SI>
 										@problemas con el procesador o disco duro
 									- En ocasiones su equipo se congela y debes reiniciar <NO>
+										@probablemente tengas un problema leve en el Disco duro y debas formatear.
 								- Logras trabajar pero notas que el equipo esta lento? <NO>
 									@vuelve a reiniciar, esta vez anota detenidamente los mensajes que la BIOS despliega e informa a un tecnico para conocer mas sobre la demora en la carga de tu SO.
 									 es muy probable que los problmeas se deban a dispositivos internos mal conectados o que la bios necesita reconfiguracion
 					- En ocasiones le pide realizar un escaneo de su disco duro, o ve la palabra clave "ScanDisk". <SI>
 						* En ocasiones anteriores, notaba lentitud al usar el equipo
 						  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <NO>
+							
 						* En ocasiones anteriores, notaba lentitud al usar el equipo
 						  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <SI>
 							@El disco duro no funciona

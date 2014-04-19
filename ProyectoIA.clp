@@ -20,10 +20,19 @@
    (slot v_bateria_funciona
       (type SYMBOL)
    )
+   (slot v_pantalla_enciende
+      (type SYMBOL)
+   )
    (slot v_bateria_sin_carga
       (type SYMBOL)
    )
    (slot v_disco_duro_ruidoso
+      (type SYMBOL)
+   )
+   (slot v_bios_demora
+      (type SYMBOL)
+   )
+   (slot v_scandisk
       (type SYMBOL)
    )
 )
@@ -468,8 +477,11 @@
    (bind ?DaImagen (read))
    (if (eq ?DaImagen Si)
       then
-	     (assert (problema-bios))
+	     (modify ?hecho_actual (v_pantalla_enciende Si))
+	  else
+	     (modify ?hecho_actual (v_pantalla_enciende No))
    )
+   (assert (problema-bios))
    (retract ?hecho)
 )
 
@@ -478,14 +490,17 @@
 ; =======================
 (defrule BIOS-INIT
    ?hecho <- (problema-bios)
+   ?hecho_actual <- (EQUIPO (v_pantalla_enciende Si))
 =>
    (printout t "ESA MISMA PANTALLA DEMORA MAS DE 10 MIN EN PASAR AL SPLASH DE ARRANQUE DE WINDOWS (Si/No)" crlf)
    (bind ?Demora (read))
    (if (eq ?Demora Si)
       then
+	     (modify ?hecho_actual (v_bios_demora Si))
 	     (assert (lentitud-bios-no-solventado))
 	     (assert (dispositivos-masivos))
 	  else
+	     (modify ?hecho_actual (v_bios_demora No))
 	     (assert (verifica-disco))
 		 (assert (lentitud-bios-solventado))
    )
@@ -534,7 +549,7 @@
    ?hecho2 <- (ARRANCA (v_arranca Si))
 =>
    (printout t "TOMA UN LAPIZ Y ANOTA TODO LO QUE ALCANCES A VER EN ESTA PANTALLA" crlf)
-   (printout t "TE SERA DE UTILIDAD EN CASO SEA NECESARIO LLAMAR A UN TECNICO" crlf)
+   (printout t "TE SERA DE UTILIDAD EN CASO TU EQUIPO CONTINUA SIN PODER CARGAR WINDOWS" crlf)
    (retract ?hecho1)
    (retract ?hecho2)
    (assert (verifica-disco))
@@ -557,7 +572,7 @@
    ?hecho <- (verifica-disco)
    ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
 =>
-   (printout t "ESCUCHA RUIDO DENTRO DE TU EQUIPO (UN RUIDO PARECIDO AL CHOQUE DE 2 METALES FINOS) (Si/No)" crlf)
+   (printout t "ESCUCHAS RUIDO DENTRO DE TU EQUIPO (UN RUIDO PARECIDO AL CHOQUE DE 2 METALES FINOS) (Si/No)" crlf)
    (bind ?ruido (read))
    (if (eq ?ruido Si)
       then
@@ -571,14 +586,17 @@
 
 (defrule ACTIVA-SCANDISK
    ?hecho <- (activa-scandisk)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
 =>
    (printout t "EN OCASIONES LE PIDE REALIZAR UN ESCANEO DE SU DISCO DURO," crlf)
    (printout t "O VE REFLEJADA LA PALABRA SCANDISK (Si/No)" crlf)
    (bind ?scandisk (read))
    (if (eq ?scandisk Si)
       then
+	     (modify ?hecho_actual (v_scandisk Si))
          (assert (lentitud-equipo))
 	  else
+	     (modify ?hecho_actual (v_scandisk No))
 	     (assert (modo-arranque))
    )
    (retract ?hecho)
@@ -620,6 +638,7 @@
 
 (defrule WINDOWS-CARGA-CONGELADO
    ?hecho <- (windows-carga-congelado)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
 =>
    (printout t "EL EQUIPO SE CONGELA DURANTE LA CARGA DE WINDOWS? (Si/No)" crlf)
    (bind ?so_congelado (read))
@@ -627,54 +646,183 @@
       then
 	     (assert (windows-congelado))
 	  else
-	  Eso quiere decir que tu equipo nunca muestra el splash de Windows, Se reinicia o simplemente no hace nada
-									 de ser asi, @Es probable que el Microprocesador este fallando o que tu Disco Duro no funcione bien y requiera un chequeo
-         (printout t "SI NO LOGRAS VER EL LOGIN O EL ESCRITORIO DE WINDOWS, ESO ME DA A ENTENDER" crlf)
-		 (printout t "QUE NI SIQUIERA LOGRAS LLEGAR AL SPLASH DE WINDOWS" crlf)
-	     (printout t "R// POR LO TANTO, TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
-		 (printout t "   1. POSIBLES PROBLEMAS CON EL PROCESADOR, POCO PROBABLE" crlf)
-		 (printout t "   2. POSIBLES PROBLEMAS CON TU DISCO DURO, MUY PROBABLE" crlf)
-		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
-		 (assert (despedida))
-		 (reset)
+	     (printout t "SI NO LOGRAS VER EL LOGIN O EL ESCRITORIO DE WINDOWS, ESO ME DA A ENTENDER" crlf)
+         (printout t "QUE NI SIQUIERA LOGRAS LLEGAR AL SPLASH DE WINDOWS" crlf)
+	     (assert (windows-no-congelado))
    )
    (retract ?hecho)
 )
+;v_disco_duro_ruidoso, v_bios_demora, v_scandisk
+; ========== SOLUCION 1 ==========
+(defrule WINDOWS-NO-CONGELADO-FIN1
+   (windows-no-congelado)
+   (EQUIPO (v_disco_duro_ruidoso Si) (v_bios_demora Si) (v_scandisk Si))
+=>
+   (printout t "R// TIENES GRAVES PROBLEMAS CON EL DISCO DURO," crlf)
+   (printout t "TE RECOMENDAMOS CONSULTAR CON ALGUIEN PARA INTENTAR RECUPERAR LA INFORMACION Y" crlf)
+   (printout t "DE PREFERENCIA CAMBIARLO DE FORMA INMEDIATA" crlf)
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
 
-(defrule WINDOWS-CONGELADO
+; ========== SOLUCION 2 ==========
+(defrule WINDOWS-NO-CONGELADO-FIN2
+   (windows-no-congelado)
+   (EQUIPO (v_disco_duro_ruidoso Si) (v_bios_demora No) (v_scandisk Si))
+=>
+   (printout t "R// TIENES PROBLEMAS CON EL DISCO DURO, APARENTEMENTE ALGUNOS SECTORES ESTAN MALOS" crlf)
+   (printout t "TE RECOMENDAMOS CONSULTAR CON ALGUIEN PARA INTENTAR RECUPERAR LA INFORMACION Y" crlf)
+   (printout t "DE PREFERENCIA CAMBIARLO DE FORMA INMEDIATA" crlf)
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
+; ========== SOLUCION 2 ==========
+(defrule WINDOWS-NO-CONGELADO-FIN2
+   (windows-no-congelado)
+   (EQUIPO (v_disco_duro_ruidoso Si) (v_bios_demora Si) (v_scandisk No))
+=>
+   (printout t "R// TIENES PROBLEMAS GRAVES CON EL DISCO DURO" crlf)
+   (printout t "TE RECOMENDAMOS CONSULTAR CON ALGUIEN PARA INTENTAR RECUPERAR LA INFORMACION Y" crlf)
+   (printout t "CAMBIARLO PARA SOLVENTAR TU PROBLEMA" crlf)
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
+; ========== SOLUCION 3 ==========
+(defrule WINDOWS-NO-CONGELADO-FIN3
+   (windows-no-congelado)
+   (EQUIPO (v_disco_duro_ruidoso No) (v_bios_demora ?valor) (v_scandisk Si))
+=>
+   (printout t "R// TIENES PROBLEMAS CON EL DISCO DURO, APARENTEMENTE LOS SECTORES MALOS" crlf)
+   (printout t "AUNQUE NO MUESTRA SINTOMAS GRAVES DE ESTAR MAL, ES POSIBLE QUE CIERTOS" crlf)
+   (printout t "SECTORES NO MARCHEN CORRECTAMENTE, SUGERIMOS LA SUPERVISION DE UN TECNICO" crlf)
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
+; ========== SOLUCION 4 ==========
+(defrule WINDOWS-NO-CONGELADO-FIN4
+   (windows-no-congelado)
+   (EQUIPO (v_disco_duro_ruidoso No) (v_bios_demora No) (v_scandisk No))
+=>
+   (printout t "R// POSIBLES PROBLEMAS CON EL PROCESADOR DE EQUIPO" crlf)
+   (printout t "EN ESOS CASOS LO MEJOR ES COMUNICARTE CON UN TECNICO PARA QUE VALIDE" crlf)
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
+(defrule WINDOWS-CONGELADO-FIN1
    (windows-congelado)
+   (EQUIPO (v_bios_demora No))
 =>
    (printout t "MUY DE VEZ EN CUANDO LOGRAS ENTRAR A WINDOWS, PERO MIENTRAS TRABAJAS EL EQUIPO TAMBIEN SE CONGELA? (Si/No)" crlf)
    (bind ?so_congelado (read))
    (if (eq ?so_congelado Si)
       then
 	     (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
-		 (printout t "   1. POSIBLES PROBLEMAS CON EL PROCESADOR, POCO PROBABLE" crlf)
-		 (printout t "   2. POSIBLES PROBLEMAS CON TU DISCO DURO, MUY PROBABLE" crlf)
-		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
-		 (assert (despedida))
-		 (reset)
 	  else
-	     (printout t "ESO ME DA A ENTENDER QUE DESDE QUE TU EQUIPO ENFERMO NO HAS PODIDO CARGAR WINDOWS CORRECTAMENTE," crlf)
+	     (printout t "ESO ME DA A ENTENDER QUE DESDE QUE TU EQUIPO ENFERMO" crlf)
+		 (printout t "NO HAS PODIDO CARGAR WINDOWS CORRECTAMENTE," crlf)
 	     (printout t "R// DE SER ASI, TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
-		 (printout t "   1. POSIBLES PROBLEMAS CON TU DISCO DURO, MUY PROBABLE" crlf)
-		 (printout t "   2. POSIBLES PROBLEMAS CON EL PROCESADOR, POCO PROBABLE" crlf)
+   )
+   (printout t "   1. POSIBLES PROBLEMAS CON EL PROCESADOR, MUY PROBABLE" crlf)
+   (printout t "   2. POSIBLES PROBLEMAS CON EL DISCO DURO, POCO PROBABLE" crlf)
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
+(defrule WINDOWS-CONGELADO-FIN1
+   (windows-congelado)
+   (EQUIPO (v_bios_demora Si))
+=>
+   (printout t "MUY DE VEZ EN CUANDO LOGRAS ENTRAR A WINDOWS, PERO MIENTRAS TRABAJAS EL EQUIPO TAMBIEN SE CONGELA? (Si/No)" crlf)
+   (bind ?so_congelado (read))
+   (if (eq ?so_congelado Si)
+      then
+	     (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+	  else
+	     (printout t "ESO ME DA A ENTENDER QUE DESDE QUE TU EQUIPO ENFERMO" crlf)
+		 (printout t "NO HAS PODIDO CARGAR WINDOWS CORRECTAMENTE," crlf)
+	     (printout t "R// DE SER ASI, TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+   )
+   (printout t "   1. POSIBLES PROBLEMAS CON EL DISCO DURO, MUY PROBABLE" crlf)
+   (printout t "   2. POSIBLES PROBLEMAS CON EL PROCESADOR, POCO PROBABLE" crlf)
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
+(defrule WINDOWS-FUNCIONA-LENTO
+   ?hecho <- (windows-lento)
+=>
+   (printout t "LOGRAS TRABAJAR, PERO NOTAS QUE EL EQUIPO TRABAJA MUY LENTO? (Si/No)" crlf)
+   (bind ?lento (read))
+   (if (eq ?lento Si)
+      then
+	     (assert (equipo-congelado))
+	  else
+         (printout t "R// VUELVE A REINICIAR TU EQUIPO, ESTA VEZ ANOTA DETENIDAMENTE LOS MENSAJES QUE BIOS" crlf)
+		 (printout t "TE DESPLIGUE DURANTE LA ESPERA, CONSERVA LA INFORMACION ES PROBABLE QUE TENGAS PROBLEMA" crlf)
+		 (printout t "CON ALGUN DISPOSITIVO INTERNO O QUE DEBAS RECONFIGURAR LA BIOS" crlf)
 		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
 		 (assert (despedida))
 		 (reset)
    )
 )
 
-(defrule WINDOWS-FUNCIONA-LENTO
-   ?hecho <- (windows-lento)
+(defrule EQUIPO-CONGELADO-FIN1
+   ?hecho <- (equipo-congelado)
+   (EQUIPO (v_bios_demora Si))
+=>
+   (printout t "EN OCASIONES SU EQUIPO SE CONGELA Y TE OBLIGA A REINICIAR? (Si/No)" crlf)
+   (bind ?congelado (read))
+   (if (eq ?congelado Si)
+      then
+         (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. POSIBLES PROBLEMAS CON TU DISCO DURO, MUY PROBABLE" crlf)
+		 (printout t "   2. POSIBLES PROBLEMAS CON EL PROCESADOR, POCO PROBABLE" crlf)
+	  else
+	     (printout t "R// TIENES PROBLEMAS CON TU DISCO DURO:" crlf)
+		 (printout t "TE RECOMENDAMOS COMENZAR A GUARDAR TU INFORMACION" crlf)
+   )
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
+(defrule EQUIPO-CONGELADO-FIN2
+   ?hecho <- (equipo-congelado)
+   (EQUIPO (v_bios_demora No))
+=>
+   (printout t "EN OCASIONES SU EQUIPO SE CONGELA Y TE OBLIGA A REINICIAR? (Si/No)" crlf)
+   (bind ?congelado (read))
+   (if (eq ?congelado Si)
+      then
+         (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. POSIBLES PROBLEMAS CON EL PROCESADOR, MUY PROBABLE" crlf)
+		 (printout t "   2. POSIBLES PROBLEMAS CON TU DISCO DURO, POCO PROBABLE" crlf)
+	  else
+	     (printout t "R// TIENES PROBLEMAS LEVES CON TU DISCO DURO:" crlf)
+		 (printout t "TE RECOMENDAMOS COMENZAR A GUARDAR TU INFORMACION" crlf)
+   )
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
 )
 
 ; ========================
 ; SITUACIONES GENERICAS
 ; ========================
-(defrule LENTITUD-EQUIPO
+(defrule LENTITUD-EQUIPO-FIN1
    ?hecho <- (lentitud-equipo)
-   ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo) (v_disco_duro_ruidoso Si))
 =>
    (if (eq ?tipo Escritorio)
       then
@@ -687,11 +835,65 @@
    (if (eq ?lentitud Si)
       then
 	     (printout t "R// LAMENTO INFORMARTE QUE EL DISCO DURO DE TU " ?tipo ", ESTA FALLANDO Y DEBES CAMBIARLO" crlf)
-		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
-		 (assert (despedida))
-		 (reset)
+	  else
+	     (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. POSIBLES PROBLEMAS CON TU DISCO DURO, SECTORES DE ARRANQUE DANADOS, MUY PROBABLE" crlf)
+		 (printout t "   2. ES PROBABLE QUE UN VIRUS ESTE AFECTANDO EL ARRANQUE DE TU SISTEMA OPERATIVO, POCO PROBABLE" crlf)
+   )
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
+(defrule LENTITUD-EQUIPO-FIN2
+   ?hecho <- (lentitud-equipo)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo) (v_disco_duro_ruidoso No))
+=>
+   (if (eq ?tipo Escritorio)
+      then
+         (bind ?tipo "PC de Escritorio")
+   )
+   (printout t "EN OCASIONES ANTERIORES, NOTO LENTITUD AL USAR EL EQUIPO" ?tipo "," crlf)
+   (printout t "Y ESA LENTITUD VENINA ACOMPANADA DE REPENTINAS PANTALLAS AZULES" crlf)
+   (printout t "QUE OBLIGABAN A REINICIAR EL EQUIPO (Si/No)" crlf)
+   (bind ?lentitud (read))
+   (if (eq ?lentitud Si)
+      then
+	     (printout t "R// LAMENTO INFORMARTE QUE EL DISCO DURO DE TU " ?tipo ", ESTA FALLANDO Y DEBES CAMBIARLO" crlf)
+	  else
+	     (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. ES PROBABLE QUE UN VIRUS ESTE AFECTANDO EL ARRANQUE DE TU SISTEMA OPERATIVO, MUY PROBALE" crlf)
+		 (printout t "   2. POSIBLES PROBLEMAS CON TU DISCO DURO, POCO PROBABLE DADO QUE NO ESCUCHASTE RUIDO" crlf)
+   )
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
+; ===========================
+; PROBLEMAS CON EL MONITOR
+; ===========================
+(defrule PROBLEMA-CON-MONITOR
+   ?hecho <- (problema-bios)
+   ?hecho_actual <- (EQUIPO (v_pantalla_enciende No))
+=>
+- La pantalla enciende pero deja un fondo oscuro y no muestra imagen? <NO>
+   (printout t "LA PANTALLA ENCIENDE, PERO DEJA UN FONDO OSCURO Y NO MUESTRA IMAGEN? (Si/No)" crlf)
+   (bind ?pantalla_oscura (read))
+   (if (eq ?pantalla_oscura No)
+      then
+         (assert (pantalla-no-enciende))
    )
    (retract ?hecho)
+)
+
+(defrule PANTALLA-NO-ENCIENDE
+   (pantalla-no-enciende)
+=>
+   (printout t "NOTAS QUE EL EQUIPO FUNCIONA, MAS LA PANTALLA PARECE ESTAR APAGADA O DESCONECTADA" crlf)
+   (printout t "LUEGO DE RECIEN ENCENDER EL EQUIPO, ESTE LANZA BEEPS (O PITIDOS) EN SENAL DE QUE ALGO NO ESTA BIEN" crlf)
+   (printout t "Y LUEGO SE APAGA DE FORMA INMEDIATA (Si/No)" crlf)
+   
 )
 
 ; ==================
