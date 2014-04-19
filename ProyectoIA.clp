@@ -23,6 +23,9 @@
    (slot v_bateria_sin_carga
       (type SYMBOL)
    )
+   (slot v_disco_duro_ruidoso
+      (type SYMBOL)
+   )
 )
 
 (deftemplate EXTENSION
@@ -40,6 +43,12 @@
    )
 )
 
+(deftemplate ARRANCA
+   (slot v_arranca
+      (type SYMBOL)
+   )
+)
+
 ; ==================
 ; INITIAL-FACT
 ; ==================
@@ -54,6 +63,7 @@
    (printout t "=================================================================" crlf)
    (printout t "GRACIAS, AHORA AYUDAME CONTESTANDO ALGUNAS PREGUNTAS:" crlf)
    (assert (arranque))
+   (assert (ARRANCA (v_arranca No)))
 )
 
 ; =====================
@@ -69,9 +79,9 @@
    (assert (inicia-validacion))
 )
 
-; ==============================
-; EN CASO DE SER PC ESCRITORIO
-; ==============================
+; ==================================================
+; EQUIPO NO ENCIENDE EN CASO DE SER PC ESCRITORIO 
+; ==================================================
 (defrule EQUIPO-ESCRITORIO
    ?hecho <- (inicia-validacion)
    ?hecho_actual <- (EQUIPO (v_tipo Escritorio) (v_enciende No))
@@ -91,9 +101,9 @@
    (retract ?hecho)
 )
 
-; ========================
-; EN CASO DE SER LAPTOP
-; ========================
+; ===========================================
+; EQUIPO NO ENCIENDE EN CASO DE SER LAPTOP
+; ===========================================
 (defrule INICIA-VALIDACION
    ?hecho <- (inicia-validacion)
    ?hecho_actual <- (EQUIPO (v_tipo Portatil) (v_enciende No))
@@ -154,7 +164,7 @@
 =>
    (printout t "R// POSIBLE CAUSA, REQUIERE CARGADOR" crlf)
    (printout t "CONECTE CARGADOR E INTENTE DE NUEVO" crlf)
-   (assert (CORREGIDO Si))
+   (assert (ENCIENDE Si))
    (bind ?*mensaje* "EL EQUIPO REQUERIA CARGADOR" crlf)
    (retract ?hecho_actual)
    (retract ?hecho)
@@ -217,7 +227,7 @@
    (printout t "R// POSIBLE CAUSA, " ?etipo" MAL CONECTADA" crlf)
    (printout t "CONECTE BIEN SU " ?etipo " E INTENTE ENCENDER DE NUEVO SU " ?tipo crlf)
 ; (bind ?*corregido* 1)
-   (assert (CORREGIDO Si))
+   (assert (ENCIENDE Si))
    (bind ?*mensaje* LA ?etipo ESTABA MAL CONECTADA)
    (retract ?hecho_actual)
    (retract ?arranque)
@@ -249,7 +259,7 @@
 =>
    (printout t "R// POSIBLE CAUSA, REGLETA APAGADA" crlf)
    (printout t "ACTIVE SU REGLETA E INTENTE DE NUEVO" crlf)
-   (assert (CORREGIDO Si))
+   (assert (ENCIENDE Si))
    (bind ?*mensaje* "LA REGLETA NO ESTABA ENCENDIDA")
    (retract ?hecho)
    (retract ?hecho_extension)
@@ -284,7 +294,7 @@
 =>
    (printout t "R// POSIBLE CAUSA, CABLE DE PODER MAL CONECTADO" crlf)
    (printout t "CORRIJA EL PROBLEMA E INTENTE DE NUEVO" crlf)
-   (assert (CORREGIDO Si))
+   (assert (ENCIENDE Si))
    (bind ?*mensaje* "EL CABLE DE LA FUENTE DE PODER NO ESTABA BIEN CONECTADO")
    (retract ?hecho)
    (retract ?hecho_extension)
@@ -370,7 +380,7 @@
 	     (printout t "APARENTEMENTE NOTASTE ALGUN CAMBIO" crlf)
 		 (printout t "CAMBIA PERMANENTEMENTE TU EQUIPO DE LUGAR E INTENTA DE NUEVO" crlf)
 	     (printout t "R// POSIBLE CAUSA, PUNTO DE ACC SIN ELECTRICIDAD" crlf)
-         (assert (CORREGIDO Si))
+         (assert (ENCIENDE Si))
          (bind ?*mensaje* "EL PUNTO DE CONEXION ACC TIENE PROBLEMAS DE CORRIENTE" crlf)
          (retract ?hecho)
          (retract ?hecho_actual)
@@ -437,7 +447,7 @@
 	     (printout t "APARENTEMENTE NOTASTE ALGUN CAMBIO" crlf)
 		 (printout t "CAMBIA PERMANENTEMENTE EL CABLE E INTENTA DE NUEVO" crlf)
 	     (printout t "R// POSIBLE CAUSA, CABLE DE PODER AVERIADO" crlf)
-         (assert (CORREGIDO Si))
+         (assert (ENCIENDE Si))
          (bind ?*mensaje* "EL CABLE DE LA FUENTE ESTABA AVERIADO")
          (retract ?hecho)
          (retract ?hecho_actual)
@@ -446,12 +456,250 @@
    )
 )
 
+; =================
+; EQUIPO ENCIENDE
+; =================
+(defrule EQUIPO-ENCIENDE-L
+   ?hecho <- (inicia-validacion)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo) (v_enciende Si))
+=>
+   (printout t "LA PANTALLA ENCIENDE MOSTRANDO LOS SIMBOLOS E IMAGENES HABITUALES" crlf)
+   (printout t "QUE SE ACTIVAN AL RECIEN ENCENDER EL EQUIPO (BIOS)? <Si/No>" crlf)
+   (bind ?DaImagen (read))
+   (if (eq ?DaImagen Si)
+      then
+	     (assert (problema-bios))
+   )
+   (retract ?hecho)
+)
+
+; =======================
+; PROBLEMA CON LA BIOS
+; =======================
+(defrule BIOS-INIT
+   ?hecho <- (problema-bios)
+=>
+   (printout t "ESA MISMA PANTALLA DEMORA MAS DE 10 MIN EN PASAR AL SPLASH DE ARRANQUE DE WINDOWS (Si/No)" crlf)
+   (bind ?Demora (read))
+   (if (eq ?Demora Si)
+      then
+	     (assert (lentitud-bios-no-solventado))
+	     (assert (dispositivos-masivos))
+	  else
+	     (assert (verifica-disco))
+		 (assert (lentitud-bios-solventado))
+   )
+   (retract ?hecho)
+)
+
+(defrule DISPOSITIVOS-MASIVOS
+   ?hecho <- (dispositivos-masivos)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
+   ?arranque <- (arranque)
+   ?hecho_arranca <- (ARRANCA (v_arranca No))
+=>
+   (printout t "VERIFIQUE QUE EN SU EQUIPO NO HAYAN CONECTADOS DISPOSITIVOS PORTATILES" crlf)
+   (printout t "DE ALMACENAMIENTO (POR EJEMPLO MEMORIAS USB, CD O FLOPPY, ¿LO HAY? (Si/No)" crlf)
+   (bind ?Dispositivos (read))
+   (if (eq ?Dispositivos Si)
+      then
+	     (printout t "RETIRE LOS DISPOSITIVOS E INTENTE DE NUEVO" crlf)
+		 (printout t "R// POSIBLE CAUSA, AMBIGUEDAD EN EL ARRANQUE DE LA BIOS" crlf)
+         (modify ?hecho_arranca (v_arranca Si))
+         (bind ?*mensaje* "UN DISPOSITIVO EXTERNO PRODUJO UN MAL ARRANQUE EN TU EQUIPO" crlf)
+         (retract ?hecho_actual)
+         (retract ?arranque)
+         (assert (arranque))
+	  else
+	     (assert (bios-demora))
+		 (assert (verifica-disco))
+   )
+   (retract ?hecho)
+)
+
+(defrule DISPOSITIVOS-MASIVOS-RETIRADOS
+   ?hecho1 <- (lentitud-bios-no-solventado)
+   ?hecho2 <- (ARRANCA (v_arranca Si))
+=>
+   (printout t "APARENTEMENTE LOS DISPOSITIVOS NO ESTABAN OCASIONANDO PROBLEMAS, SIN EMBARGO," crlf)
+   (printout t "TE RECOMENDAMOS MANTENERLOS DESCONECTADOS MIENTRAS CONTINUAMOS CON EL DIAGNOSTICO" crlf)
+   (printout t "DE TU EQUIPO" crlf)
+   (assert (verifica-disco))
+   (retract ?hecho1)
+   (retract ?hecho2)
+)
+
+(defrule BIOS-DEMORA
+   ?hecho1 <- (bios-demora)
+   ?hecho2 <- (ARRANCA (v_arranca Si))
+=>
+   (printout t "TOMA UN LAPIZ Y ANOTA TODO LO QUE ALCANCES A VER EN ESTA PANTALLA" crlf)
+   (printout t "TE SERA DE UTILIDAD EN CASO SEA NECESARIO LLAMAR A UN TECNICO" crlf)
+   (retract ?hecho1)
+   (retract ?hecho2)
+   (assert (verifica-disco))
+)
+
+; ========== SOLUCION ==========
+(defrule LENTITUD-BIOS-SOLVENTADO
+   ?hecho <- (lentitud-bios-solventado)
+   (ARRANCA (v_arranca Si))
+=>
+   (printout t ?*mensaje* crlf)
+   (assert (despedida))
+;   (reset)
+)
+
+; =================================================
+; PROBLEMAS CON DISCO DURO O ARRANQUE DE WINDOWS
+; =================================================
+(defrule VERIFICA-DISCO
+   ?hecho <- (verifica-disco)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
+=>
+   (printout t "ESCUCHA RUIDO DENTRO DE TU EQUIPO (UN RUIDO PARECIDO AL CHOQUE DE 2 METALES FINOS) (Si/No)" crlf)
+   (bind ?ruido (read))
+   (if (eq ?ruido Si)
+      then
+	     (modify ?hecho_actual (v_disco_duro_ruidoso Si))
+	  else
+	     (modify ?hecho_actual (v_disco_duro_ruidoso No))
+   )
+   (retract ?hecho)
+   (assert (activa-scandisk))
+)
+
+(defrule ACTIVA-SCANDISK
+   ?hecho <- (activa-scandisk)
+=>
+   (printout t "EN OCASIONES LE PIDE REALIZAR UN ESCANEO DE SU DISCO DURO," crlf)
+   (printout t "O VE REFLEJADA LA PALABRA SCANDISK (Si/No)" crlf)
+   (bind ?scandisk (read))
+   (if (eq ?scandisk Si)
+      then
+         (assert (lentitud-equipo))
+	  else
+	     (assert (modo-arranque))
+   )
+   (retract ?hecho)
+)
+
+(defrule MODO-ARRANQUE
+   ?hecho <- (modo-arranque)
+=>
+   (printout t "EN OCASIONES (CASI SIEMPRE) LE PIDE ELEGIR EL MODO CON EL QUE QUIERE" crlf)
+   (printout t "QUE ARRANQUE WINDOWS (POR EJEMPLO: SAFE MODE O MODO SEGURO)? (Si/No)" crlf)
+   (bind ?modo_seguro (read))
+   (if (eq ?modo_seguro Si)
+      then
+	     (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. POSIBLES PROBLEMAS CON TU DISCO DURO, POCO PROBABLE DADO QUE NO ESCUCHASTE RUIDO" crlf)
+		 (printout t "   2. ES PROBABLE QUE UN VIRUS ESTE AFECTANDO EL ARRANQUE DE TU SISTEMA OPERATIVO" crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+	  else
+	     (assert (windows-carga))
+   )
+   (retract ?hecho)
+)
+
+(defrule WINDOWS-CARGA
+   ?hecho <- (windows-carga)
+=>
+   (printout t "EL SISTEMA OPERATIVO LOGRA LLEGAR AL LOGIN O A LEVANTAR EL ESCRITORIO? (Si/No)" crlf)
+   (bind ?so_carga (read))
+   (if (eq ?so_carga No)
+      then
+	     (assert (windows-carga-congelado))
+	  else
+	     (assert (windows-trabaja-lento))
+   )
+   (retract ?hecho)
+)
+
+(defrule WINDOWS-CARGA-CONGELADO
+   ?hecho <- (windows-carga-congelado)
+=>
+   (printout t "EL EQUIPO SE CONGELA DURANTE LA CARGA DE WINDOWS? (Si/No)" crlf)
+   (bind ?so_congelado (read))
+   (if (eq ?so_congelado Si)
+      then
+	     (assert (windows-congelado))
+	  else
+	  Eso quiere decir que tu equipo nunca muestra el splash de Windows, Se reinicia o simplemente no hace nada
+									 de ser asi, @Es probable que el Microprocesador este fallando o que tu Disco Duro no funcione bien y requiera un chequeo
+         (printout t "SI NO LOGRAS VER EL LOGIN O EL ESCRITORIO DE WINDOWS, ESO ME DA A ENTENDER" crlf)
+		 (printout t "QUE NI SIQUIERA LOGRAS LLEGAR AL SPLASH DE WINDOWS" crlf)
+	     (printout t "R// POR LO TANTO, TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. POSIBLES PROBLEMAS CON EL PROCESADOR, POCO PROBABLE" crlf)
+		 (printout t "   2. POSIBLES PROBLEMAS CON TU DISCO DURO, MUY PROBABLE" crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+   )
+   (retract ?hecho)
+)
+
+(defrule WINDOWS-CONGELADO
+   (windows-congelado)
+=>
+   (printout t "MUY DE VEZ EN CUANDO LOGRAS ENTRAR A WINDOWS, PERO MIENTRAS TRABAJAS EL EQUIPO TAMBIEN SE CONGELA? (Si/No)" crlf)
+   (bind ?so_congelado (read))
+   (if (eq ?so_congelado Si)
+      then
+	     (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. POSIBLES PROBLEMAS CON EL PROCESADOR, POCO PROBABLE" crlf)
+		 (printout t "   2. POSIBLES PROBLEMAS CON TU DISCO DURO, MUY PROBABLE" crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+	  else
+	     (printout t "ESO ME DA A ENTENDER QUE DESDE QUE TU EQUIPO ENFERMO NO HAS PODIDO CARGAR WINDOWS CORRECTAMENTE," crlf)
+	     (printout t "R// DE SER ASI, TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. POSIBLES PROBLEMAS CON TU DISCO DURO, MUY PROBABLE" crlf)
+		 (printout t "   2. POSIBLES PROBLEMAS CON EL PROCESADOR, POCO PROBABLE" crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+   )
+)
+
+(defrule WINDOWS-FUNCIONA-LENTO
+   ?hecho <- (windows-lento)
+)
+
+; ========================
+; SITUACIONES GENERICAS
+; ========================
+(defrule LENTITUD-EQUIPO
+   ?hecho <- (lentitud-equipo)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
+=>
+   (if (eq ?tipo Escritorio)
+      then
+         (bind ?tipo "PC de Escritorio")
+   )
+   (printout t "EN OCASIONES ANTERIORES, NOTO LENTITUD AL USAR EL EQUIPO" ?tipo "," crlf)
+   (printout t "Y ESA LENTITUD VENINA ACOMPANADA DE REPENTINAS PANTALLAS AZULES" crlf)
+   (printout t "QUE OBLIGABAN A REINICIAR EL EQUIPO (Si/No)" crlf)
+   (bind ?lentitud (read))
+   (if (eq ?lentitud Si)
+      then
+	     (printout t "R// LAMENTO INFORMARTE QUE EL DISCO DURO DE TU " ?tipo ", ESTA FALLANDO Y DEBES CAMBIARLO" crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+   )
+   (retract ?hecho)
+)
+
 ; ==================
 ; RESULTADOS
 ; ==================
 (defrule EQUIPO-ENCIENDE
    (EQUIPO (v_enciende Si))
-   (CORREGIDO Si)
+   (ENCIENDE Si)
 ; (CORREGIDO ?corregido&:(= 1 ?*corregido*))
 =>
    (printout t ?*mensaje* crlf)

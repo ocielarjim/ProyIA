@@ -1,6 +1,7 @@
 2. El equipo enciende <SI>
 	- La pantalla se enciende mostrando los simbolos habituales e imagenes que se activan al recien encender? <SI>
 		- Esa misma pantalla demora mas de 10 segundos en pasar al arranque de Windows. <NO>
+		   @Escucha ruido
 		- Esa misma pantalla demora mas de 10 segundos en pasar al arranque de Windows. <SI>
 			- Verifique que en su equipo no este introducido un dispositivo portatil (por ejemplo, memorias USB, CD o Floppy) <SI>
 				- Retire cualquier dispositivo portatil e intente de nuevo
@@ -12,10 +13,29 @@
 					- Escucha ruido
 			- Verifique que en su equipo no este introducido un dispositivo portatil (por ejemplo, memorias USB, CD o Floppy) <NO>
 				- Escucha ruido (un ruido parecido al choque de 2 metales finos) dentro de su PC? <NO>
-					@Es probable que el problema se deba al arranque de Windows.
+					@Escaneo del disco duro
 				- Escucha ruido (un ruido parecido al choque de 2 metales finos) dentro de su PC? <SI>
 					- En ocasiones le pide realizar un escaneo de su disco duro, o ve la palabra clave "ScanDisk". <NO>
-						@Es probable que el problema se deba al arranque de Windows y posibles danos con tu Disco Duro.
+						- En ocasiones (casi siempre) le pide elegir el modo con el que quiere que arranque Windows <SI>
+							@Es probable que el problema se deba al arranque de Windows y posibles danos con tu Disco Duro o un Virus afecto tu sistema de arranque.
+						- En ocasiones (casi siempre) le pide elegir el modo con el que quiere que arranque Windows <NO>
+							- El sistema operativo logra cargar llegando al login o al escritorio? <NO>
+								- El equipo se congela durente la carga de Windows? <SI>
+									- Muy devez en cuando, logras entrar al sistema operativo? <SI>
+										@Es probable que el Microprocesador este fallando
+									- Muy devez en cuando, logras entrar al sistema operativo? <NO>
+										@Es probable que el problema se deba al arranque de Windows y posibles danos con tu Disco Duro o un Virus afecto tu sistema de arranque.
+								- El equipo se congela durente la carga de Windows? <NO>
+									@Eso quiere decir que tu equipo nunca muestra el splash de Windows, Se reinicia o simplemente no hace nada
+									 de ser asi, @Es probable que el Microprocesador este fallando o que tu Disco Duro no funcione bien y requiera un chequeo.
+							- El sistema operativo logra cargar llegando al login o al escritorio? <SI>
+								- Logras trabajar pero notas que el equipo esta lento? <SI>
+									- En ocasiones su equipo se congela y debes reiniciar <SI>
+										@problemas con el procesador o disco duro
+									- En ocasiones su equipo se congela y debes reiniciar <NO>
+								- Logras trabajar pero notas que el equipo esta lento? <NO>
+									@vuelve a reiniciar, esta vez anota detenidamente los mensajes que la BIOS despliega e informa a un tecnico para conocer mas sobre la demora en la carga de tu SO.
+									 es muy probable que los problmeas se deban a dispositivos internos mal conectados o que la bios necesita reconfiguracion
 					- En ocasiones le pide realizar un escaneo de su disco duro, o ve la palabra clave "ScanDisk". <SI>
 						* En ocasiones anteriores, notaba lentitud al usar el equipo
 						  y la lentitud venia acompanada de repentinas pantallas azules que obligaban a reiniciar el equipo. <NO>
