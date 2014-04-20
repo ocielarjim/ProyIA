@@ -888,13 +888,101 @@
 )
 
 (defrule PANTALLA-NO-ENCIENDE
-   (pantalla-no-enciende)
+   ?hecho <- (pantalla-no-enciende)
 =>
    (printout t "NOTAS QUE EL EQUIPO FUNCIONA, MAS LA PANTALLA PARECE ESTAR APAGADA O DESCONECTADA" crlf)
    (printout t "LUEGO DE RECIEN ENCENDER EL EQUIPO, ESTE LANZA BEEPS (O PITIDOS) EN SENAL DE QUE ALGO NO ESTA BIEN" crlf)
    (printout t "Y LUEGO SE APAGA DE FORMA INMEDIATA (Si/No)" crlf)
-   
+   (bind ?pitidos (read))
+   (if (eq ?pitidos Si)
+      (assert (remplaza-ram))
+   )
 )
+
+(defrule REMPLAZA-RAM
+   ?hecho <- (remplaza-ram)
+=>
+   (printout t "HAS INTENTADO CAMBIAR LA MEMORIA RAM DE TU EQUIPO?" crlf)
+   (printout t "O HAS PEDIDO A ALGUN TECNICO PARA QUE REALICE UN TEST DE TUS TARJETAS RAM? (Si/No)" crlf)
+   (bind ?cambio_ram (read))
+   (if (eq ?cambio_ram No)
+      then
+         (printout t "R// ES PROBABLE QUE TU EQUIPO TENGA PROBLEMAS DE RAM," crlf)
+		 (printout t "TE RECOMENDAMOS HABLAR CON UN TECNICO Y REALIZAR UN TEST DE TUS TARJETAS RAM" crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+	  else
+	     (printout t "R// LOS PROBLEMAS DE TU EQUIPO PARECEN ESTAR ASOCIADOS A PROBLEMAS DE MOTHERBOARD," crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+   )
+)
+
+(defrule LUZ-LECTURA-ESCRITURA
+   ?hecho <- (luz-lectura-escritura)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
+=>
+   (if (eq ?tipo Portatil)
+      then
+         (printout t "LAS COMPUTADORAS PORTATILES CUENTAN CON AL MENOS 3 LUCES QUE INDICAN EL ESTADO DE TU PC" crlf)
+	     (printout t "1. LA PRIMERA INDICA SI EL EQUIPO ESTA ENCENDIDO O NO, SIEMPRE ENCENDIDO Y SIN PARPADEAR" crlf)
+	     (printout t "2. OTRA QUE INDICA SI EL CARGADOR ESTA CONECTADO, SE ENCIENDE Y APAGA AL DESCONECTAR EL CARGADOR" crlf)
+	     (printout t "3. Y UNA MAS QUE SE MANTIENE INTERMITENTE, INDICANDO QUE EL EQUIPO TIENE ACTIVIDAD" crlf)
+	  else
+	     (printout t "LOS EQUIPOS DE ESCRITORIO CUENTAN CON AL MENOS 2 LUCES QUE INDICAN EL ESTADO DE TU PC" crlf)
+	     (printout t "1. LA PRIMERA INDICA SI EL EQUIPO ESTA ENCENDIDO O NO, SIEMPRE ENCENDIDO Y SIN PARPADEAR" crlf)
+	     (printout t "2. Y UNA MAS QUE SE MANTIENE INTERMITENTE, INDICANDO QUE EL EQUIPO TIENE ACTIVIDAD" crlf)
+   )
+   (printout t "LOGRAS APRECIAR SI TU EQUIPO TIENE ACTIVIDAD? (Si/No)" crlf)
+   (bind ?actividad (read))
+   (if (eq ?actividad Si)
+      (printout t "ESPEREMOS 5 MINUTOS, A FIN DE ASUMIR QUE EL EQUIPO ESTA FUNCIONANDO CON NORMALIDAD" crlf)
+	  (assert (pruebas-monitor))
+   )
+   (retract ?hecho)
+)
+
+; ===========================
+; PROBLEMAS CON EL MONITOR
+; ===========================
+(defrule PRUEBAS-MONITOR-PORTATIL
+   ?hecho <- (pruebas-monitor)
+   ?hecho_actual <- (EQUIPO (v_tipo Portatil))
+=>
+   (printout t "LOS EQUIPOS PORTATILES CUENTAN CON AL MENOS 1 SALIDA PARA CONECTAR UN MONITOR EXTERNO" crlf)
+   (printout t "EL SIGUIENTE PASO PUEDE SER COMPLICADO POR CARENCIA DE MATERIALES" crlf)
+   (printout t "NECESITAS UN MONITOR DISPONIBLE, Y REALIZAR UNA PRUEBA" crlf)
+   (printout t "TIENES A TU ALCANCE UN MONITOR DISPONIBLE? (Si/No)" crlf)
+   (bind ?disponible (read))
+   (if (eq ?disponible Si)
+      (assert (cambia-monitor))
+   )
+   (retract ?hecho)
+)
+
+(defrule CAMBIA-MONITOR
+   ?hecho <- (cambia-monitor)
+=>
+   (printout t "INTENTA CONECTAR EL MONITOR DISPONIBLE Y VERIFICA EL RESULTADO" crlf)
+   (printout t "TOMATE TU TIEMPO, SABEMOS QUE PUEDE SER UNA TAREA DIFICIL, PRESIONA OK AL TERMINAR" crlf)
+   (read)
+   (printout t "EL MONITOR MOSTRO RESULTADOS POSITIVOS (Si/No)" crlf)
+   (bind ?funciono (read))
+   (if (eq ?funciono Si)
+      then
+         (printout t "R// EL MONITOR DEJO DE FUNCIONAR, NECESITAS LLEVAR TU EQUIPO A UN CHEQUEO," crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+   )
+)
+
+; ===================
+; CABLE DE MONITOR
+; ===================
+(defrule MONITOR
 
 ; ==================
 ; RESULTADOS
