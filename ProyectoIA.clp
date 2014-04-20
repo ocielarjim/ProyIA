@@ -870,6 +870,32 @@
    (reset)
 )
 
+(defrule LENTITUD-EQUIPO-FIN3
+   ?hecho1 <- (lentitud-equipo)
+   ?hecho2 <- (problema-procesador)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
+=>
+   (if (eq ?tipo Escritorio)
+      then
+         (bind ?tipo "PC de Escritorio")
+   )
+   (printout t "EN OCASIONES ANTERIORES, NOTO LENTITUD AL USAR EL EQUIPO" ?tipo "," crlf)
+   (printout t "Y ESA LENTITUD VENINA ACOMPANADA DE REPENTINAS PANTALLAS AZULES" crlf)
+   (printout t "QUE OBLIGABAN A REINICIAR EL EQUIPO (Si/No)" crlf)
+   (bind ?lentitud (read))
+   (if (eq ?lentitud Si)
+      then
+	     (printout t "R// EL PROCESADOR DE TU " ?tipo ", ESTA FALLANDO Y DEBES CAMBIARLO" crlf)
+	  else
+	     (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. POSIBLES PROBLEMAS CON TU PROCESADOR, MUY PROBABLE" crlf)
+		 (printout t "   2. POSIBLES PROBLEMAS CON TU MOTHERBOARD, POCO PROBABLE" crlf)
+   )
+   (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+   (assert (despedida))
+   (reset)
+)
+
 ; ===========================
 ; PROBLEMAS CON EL MONITOR
 ; ===========================
@@ -883,6 +909,8 @@
    (if (eq ?pantalla_oscura No)
       then
          (assert (pantalla-no-enciende))
+      else
+	     (assert (problemas-procesador))
    )
    (retract ?hecho)
 )
@@ -895,7 +923,10 @@
    (printout t "Y LUEGO SE APAGA DE FORMA INMEDIATA (Si/No)" crlf)
    (bind ?pitidos (read))
    (if (eq ?pitidos Si)
-      (assert (remplaza-ram))
+      then
+         (assert (remplaza-ram))
+;	  else
+;	     PROGRAMAR QUE SI ENTRA A WINDOWS O LO QUE SEA
    )
 )
 
@@ -938,8 +969,9 @@
    (printout t "LOGRAS APRECIAR SI TU EQUIPO TIENE ACTIVIDAD? (Si/No)" crlf)
    (bind ?actividad (read))
    (if (eq ?actividad Si)
-      (printout t "ESPEREMOS 5 MINUTOS, A FIN DE ASUMIR QUE EL EQUIPO ESTA FUNCIONANDO CON NORMALIDAD" crlf)
-	  (assert (pruebas-monitor))
+      then
+         (printout t "ESPEREMOS 5 MINUTOS, A FIN DE ASUMIR QUE EL EQUIPO ESTA FUNCIONANDO CON NORMALIDAD" crlf)
+         (assert (pruebas-monitor))
    )
    (retract ?hecho)
 )
@@ -957,7 +989,13 @@
    (printout t "TIENES A TU ALCANCE UN MONITOR DISPONIBLE? (Si/No)" crlf)
    (bind ?disponible (read))
    (if (eq ?disponible Si)
-      (assert (cambia-monitor))
+      then
+         (assert (cambia-monitor))
+	  else
+	     (printout t "ENTENDEMOS TU DIFICULTAD, TRATA DE CONSEGUIR UN MONITOR QUE FUNCIONE E INTENTA MAS TARDE" crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
    )
    (retract ?hecho)
 )
@@ -968,21 +1006,91 @@
    (printout t "INTENTA CONECTAR EL MONITOR DISPONIBLE Y VERIFICA EL RESULTADO" crlf)
    (printout t "TOMATE TU TIEMPO, SABEMOS QUE PUEDE SER UNA TAREA DIFICIL, PRESIONA OK AL TERMINAR" crlf)
    (read)
-   (printout t "EL MONITOR MOSTRO RESULTADOS POSITIVOS (Si/No)" crlf)
+   (printout t "EL MONITOR MOSTRO IMAGENES AL CONECTAR (Si/No)" crlf)
    (bind ?funciono (read))
    (if (eq ?funciono Si)
       then
-         (printout t "R// EL MONITOR DEJO DE FUNCIONAR, NECESITAS LLEVAR TU EQUIPO A UN CHEQUEO," crlf)
+         (printout t "R// TU MONITOR DEJO DE FUNCIONAR, NECESITAS LLEVAR TU EQUIPO A UN CHEQUEO," crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+	  else
+	     (printout t "PROBABLEMENTE TENGAS PROBLEMAS CON TU TARJETA DE VIDEO, O BIEN TU MOTHERBOARD")
 		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
 		 (assert (despedida))
 		 (reset)
    )
 )
 
-; ===================
-; CABLE DE MONITOR
-; ===================
-(defrule MONITOR
+(defrule PRUEBAS-MONITOR-ESCRITORIO
+   ?hecho <- (pruebas-monitor)
+   ?hecho_actual <- (EQUIPO (v_tipo Escritorio))
+=>
+   (assert (cable-poder-monitor))
+   (retract ?hecho)
+)
+
+(defrule CABLE-PODER-AVERIADO-MONITOR
+   ?hecho <- (cable-poder-monitor)
+=>
+   (printout t "EL SIGUIENTE PASO PUEDE SER COMPLICADO POR CARENCIA DE MATERIALES" crlf)
+   (printout t "NECESITAS OTRO CABLE CON LAS MISMAS CARACTERISTICAS PARA ALIMENTAR CON CORRIENTE A TU MONITOR" crlf)
+   (printout t "PUEDES CONSEGUIR UN CABLE Y VERIFICAR EL COMPORTAMIENTO? (Si/No)" crlf)
+   (bind ?cable_nuevo (read))
+   (if (eq ?cable_nuevo Si)
+      then
+	     (assert (cable-poder-monitor-funciona))
+	  else
+	     (printout t "ENTENDEMOS TU DIFICULTAD, TRATA DE CONSEGUIR UN CABLE SIMILAR E INTENTA MAS TARDE" crlf)
+		 (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+		 (assert (despedida))
+		 (reset)
+   )
+   (retract ?hecho)
+)
+
+(defrule CABLE-PODER-MONITOR-FUNCIONA
+   ?hecho <- (cable-poder-monitor-funciona)
+   ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
+   ?arranque <- (arranque)
+=>
+   (printout t "REMPLAZA EL CABLE DE PODER E INTENTA VER QUE SUCEDE" crlf)
+   (printout t "TOMATE TU TIEMPO..., Y ESCRIBE OK AL HABER CULMINADO ESTA ACCION" crlf)
+   (read)
+   (printout t "GRACIAS POR INTENTARLO" crlf)
+   (printout t "EL MONITOR MOSTRO IMAGEN AL INTENTAR CON OTRO CABLE DE PODER? (Si/No)" crlf)
+   (bind ?resultado (read))
+   (if (eq ?resultado Si)
+      then
+         (printout t "R// TIENES PROBLEMAS CON EL CARGADOR DE TU MONITOR, TE RECOMENDAMOS COMPRAR UNO NUEVO" crlf)
+         (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+         (assert (despedida))
+         (reset)
+      else
+         (printout t "EL SIGUIENTE PASO PUEDE SER COMPLICADO POR CARENCIA DE MATERIALES" crlf)
+         (printout t "NECESITAS UN MONITOR DISPONIBLE, Y REALIZAR UNA PRUEBA" crlf)
+         (printout t "TIENES A TU ALCANCE UN MONITOR DISPONIBLE? (Si/No)" crlf)
+		 (bind ?disponible (read))
+         (if (eq ?disponible Si)
+            then
+               (assert (cambia-monitor))
+            else
+               (printout t "ENTENDEMOS TU DIFICULTAD, TRATA DE CONSEGUIR UN MONITOR QUE FUNCIONE E INTENTA MAS TARDE" crlf)
+               (printout t "LLAMA A ESTE NUMERO 55102892 CON GUSTO TE VISITARA UN TECNICO" crlf "CAPACITADO PARA BRINDARTE ASESORIA Y MAS INFORMACION" crlf)
+               (assert (despedida))
+               (reset)
+         )
+   )
+)
+
+; ==========================
+; PROBLEMAS CON PROCESADOR
+; ==========================
+(defrule PROBLEMAS-PROCESADOR
+   ?hecho <- (problemas-procesador)
+=>
+   (assert (lentitud-equipo))
+)
 
 ; ==================
 ; RESULTADOS
