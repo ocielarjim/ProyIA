@@ -680,7 +680,7 @@
 )
 
 ; ========== SOLUCION 2 ==========
-(defrule WINDOWS-NO-CONGELADO-FIN2
+(defrule WINDOWS-NO-CONGELADO-FIN3
    (windows-no-congelado)
    (EQUIPO (v_disco_duro_ruidoso Si) (v_bios_demora Si) (v_scandisk No))
 =>
@@ -693,7 +693,7 @@
 )
 
 ; ========== SOLUCION 3 ==========
-(defrule WINDOWS-NO-CONGELADO-FIN3
+(defrule WINDOWS-NO-CONGELADO-FIN4
    (windows-no-congelado)
    (EQUIPO (v_disco_duro_ruidoso No) (v_bios_demora ?valor) (v_scandisk Si))
 =>
@@ -706,7 +706,7 @@
 )
 
 ; ========== SOLUCION 4 ==========
-(defrule WINDOWS-NO-CONGELADO-FIN4
+(defrule WINDOWS-NO-CONGELADO-FIN5
    (windows-no-congelado)
    (EQUIPO (v_disco_duro_ruidoso No) (v_bios_demora No) (v_scandisk No))
 =>
@@ -738,7 +738,7 @@
    (reset)
 )
 
-(defrule WINDOWS-CONGELADO-FIN1
+(defrule WINDOWS-CONGELADO-FIN2
    (windows-congelado)
    (EQUIPO (v_bios_demora Si))
 =>
