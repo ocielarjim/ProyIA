@@ -97,7 +97,26 @@
 (deffunction DESPEDIDA
    (?valor)
    (printout t "GRACIAS POR USAR NUESTRO SISTEMA" crlf "SALUDOS" crlf)
-   (printout t "=================================================================" crlf)
+   (printout t "===================================================================" crlf)
+   (printout t "   @@ @@  @@@  @@@@@ @@@@@  @@@    @@    @@ @@ @@@@@ @@@@@  @@@" crlf)
+   (printout t "   @@ @@ @@ @@ @@      @   @@ @@   @@    @@ @@ @@    @@    @@ @@" crlf)
+   (printout t "   @@@@@ @@@@@ @@@@@   @   @@@@@   @@    @@ @@ @@@@  @@@@@ @@ @@" crlf)
+   (printout t "   @@ @@ @@ @@    @@   @   @@ @@   @@    @@ @@ @@    @@ @@ @@ @@" crlf)
+   (printout t "   @@ @@ @@ @@ @@@@@   @   @@ @@   @@@@@ @@@@@ @@@@@ @@@@@  @@@" crlf)
+   (printout t "===================================================================" crlf)
+)
+
+(deffunction DIAGNOSTICO-INICIA
+   (?valor)
+   (printout t "===================================================================" crlf)
+   (printout t "*******************************************************************" crlf)
+   (printout t "                        DIAGNOSTICO FINAL" crlf)
+)
+
+(deffunction DIAGNOSTICO-FIN
+   (?valor)
+   (printout t "*******************************************************************" crlf)
+   (printout t "===================================================================" crlf)
 )
 
 ; ==================
@@ -106,17 +125,89 @@
 (defrule ARRANQUE
    (initial-fact)
 =>
-   (printout t "=================================================================" crlf)
-   (printout t "BIENVENIDO Y GRACIAS POR USAR NUESTRO SISTEMA" crlf)
-   (printout t "=================================================================" crlf)
-   (printout t "ESCRIBE UNA PEQUENA DESCRIPCION DEL MALESTAR DE TU EQUIPO:" crlf)
-   (read)
+   (printout t "===================================================================" crlf)
+   (printout t "      @@@@  @@ @@@@@ @@  @@ @@ @@ @@@@@ @@  @@ @@ @@@@   @@@" crlf)
+   (printout t "      @@ @@ @@ @@    @@@ @@ @@ @@ @@    @@@ @@ @@ @@ @@ @@ @@" crlf)
+   (printout t "      @@@@  @@ @@@@  @@ @@@ @@ @@ @@@@  @@ @@@ @@ @@ @@ @@ @@" crlf)
+   (printout t "      @@ @@ @@ @@    @@  @@  @@@  @@    @@  @@ @@ @@ @@ @@ @@" crlf)
+   (printout t "      @@@@  @@ @@@@@ @@  @@   @   @@@@@ @@  @@ @@ @@@@   @@@" crlf)
+   (printout t "===================================================================" crlf)
+   (printout t "          BIENVENIDO Y GRACIAS POR USAR NUESTRO SISTEMA" crlf)
    (printout t "" crlf)
-   (printout t "GRACIAS, AHORA AYUDAME CONTESTANDO ALGUNAS PREGUNTAS:" crlf)
-   (assert (arranque))
-   (assert (ARRANCA (v_arranca No)))
-   (assert (ENCIENDE (v_enciende No)))
+   (printout t "ESTE SISTEMA  SE ENCUENTRA DISENADO PARA ORIENTARTE EN  LA SOLUCION" crlf)
+   (printout t "DE LOS PROBLEMAS MAS COMUNES QUE  PUEDEN AFECTAR  A TU  PC,  EL FIN" crlf)
+   (printout t "DE ESTA APLICACION CONSISTE  EN QUE A PARTIR DE SITUACIONES LOGICAS" crlf)
+   (printout t "PODAMOS  DETERMINAR  UNA POSIBLE CAUSA DE LOS PROBLEMAS, Y APOYARTE" crlf)
+   (printout t "PARA  QUE CUANDO  NECESITES DESCRIBIR  LOS PROBLEMAS A  UN  TECNICO" crlf)
+   (printout t "PUEDAS ADOPTAR  UNA MEJOR POSTURA EN LA EXPLICACION DE TU MALESTAR," crlf)
+   (printout t "CREEMOS QUE LO IDEAL SIEMPRE ES QUE ACUDAS CON UNA PERSONA QUE ESTE" crlf)
+   (printout t "CALIFICADA PARA REALIZAR UN MEJOR DIAGNOSTICO  DE TU EQUIPO, ES POR" crlf)
+   (printout t "ELLO QUE DESDE  YA TE INVITAMOS  A QUE ANOTES LOS  SIGIENTES  DATOS" crlf)
+   (printout t "Y PUEDAS COMUNICARTE  CON NUESTRO EQUIPO  EN CUALQUIER MOMENTO  QUE" crlf)
+   (printout t "LO REQUIERAS,  PARA  NOSOTROS SERA UN GRAN  GUSTO  PODER  ATENDERTE" crlf)
+   (printout t "" crlf)
+   (printout t "    - TELEFONO: 55102892" crlf)
+   (printout t "    - CORREO: ocieljimenez05@gmail.com" crlf)
+   (printout t "" crlf)
+   (printout t "SALUDOS" crlf)
+   (printout t "===================================================================" crlf)
+   (printout t "ESCRIBE UNA PEQUENA DESCRIPCION DEL MALESTAR DE TU EQUIPO:" crlf)
+   (bind ?salir (read))
+   (if (eq ?salir 9)
+      then
+         (printout t "" crlf)
+         (printout t "" crlf)
+         (PUBLICIDAD nil)
+         (DESPEDIDA nil)
+         (assert (fin))
+	  else
+	     (printout t "" crlf)
+         (printout t "GRACIAS, AHORA AYUDAME CONTESTANDO ALGUNAS PREGUNTAS:" crlf)
+		 (printout t "" crlf)
+         (assert (pre-validacion))
+         (assert (ARRANCA (v_arranca No)))
+         (assert (ENCIENDE (v_enciende No)))
+   )
 )
+
+; ==============================
+; PRE-VALIDACION DE PROBLEMAS
+; ==============================
+(defrule PRE-VALIDACION
+   (pre-validacion)
+=>
+   (printout t "PARA AHORRAR UN POCO DE TIEMPO, SELECCIONA UNA DE LAS SIGUIENTES" crlf)
+   (printout t "OPCIONES, SUGERENCIAS A GROSO MODO QUE LE PERMITA A ESTE SISTEMA" crlf)
+   (printout t "SEGMENTAR LAS POSIBLES CAUSAS O PROBLEMAS EN TU PC:" crlf)
+   (printout t "   1. Tu PC no enciende o el arranque de Windows falla" crlf)
+   (printout t "   2. Logras acceder al sistema operativo mas el sistema no trabaja como lo esperas" crlf)
+   (printout t "   3. Tienes problemas con las aplicaciones, por ejemplo la navegacion a internet" crlf)
+   (printout t "   4. Ninguna de las anteriores" crlf)
+   (printout t ?*escribe_respuesta*)
+   (bind ?valor (read))
+   (printout t "" crlf)
+   (if (eq ?valor 1)
+      then
+	     (assert (arranque))
+   )
+   (if (eq ?valor 2)
+      then
+	     (assert (arranque))
+   )
+   (if (eq ?valor 3)
+      then
+	     (assert (arranque))
+   )
+   (if (eq ?valor 4)
+      then
+	     (printout t "" crlf)
+         (printout t "" crlf)
+         (PUBLICIDAD nil)
+         (DESPEDIDA nil)
+         (assert (fin))
+   )
+)
+
 
 ; =====================
 ; PREGUNTA INICIAL
@@ -157,25 +248,28 @@
    (if (eq ?existe Si)
       then
          (printout t "QUE TIPO DE EXTENSION USA?" crlf)
-         (printout t "1. Extension" crlf)
-         (printout t "2. Regleta" crlf)
-         (printout t ?*escribe_respuesta* crlf)
+         (printout t "   1. Extension" crlf)
+         (printout t "   2. Regleta" crlf)
+         (printout t ?*escribe_respuesta*)
          (bind ?tipo (read))
 		 (printout t "" crlf)
          (if (eq ?tipo 1)
 		    then
-			   ?tipo = Extension
+			   (bind ?tipo Extension)
 			else
-			   ?tipo = Regleta
+			   (bind ?tipo Regleta)
 		 )
-         (assert (EXTENSION (v_existe ?existe) (v_tipo ?tipo)))
+         (assert (EXTENSION (v_existe Si) (v_tipo ?tipo)))
          (assert (extension-bien-conectada))
       else
+	     (assert (EXTENSION (v_existe No)))
          (assert (cable-poder))
 		 (assert (sin-extension))
    )
    (retract ?hecho)
 )
+
+
 
 ; ===========================================
 ; EQUIPO NO ENCIENDE EN CASO DE SER LAPTOP
@@ -248,11 +342,11 @@
    (printout t "R// POSIBLE CAUSA, REQUIERE CARGADOR" crlf)
    (printout t "CONECTE CARGADOR E INTENTE DE NUEVO" crlf)
    (modify  ?enciende (v_enciende Si))
-   (bind ?*mensaje* "EL EQUIPO REQUERIA CARGADOR" crlf)
+   (bind ?*mensaje* "EL EQUIPO REQUERIA CARGADOR")
    (retract ?hecho_actual)
    (retract ?hecho)
    (retract ?arranque)
-   (assert (arranque))
+   ;(assert (arranque))
 )
 
 ; =====================================
@@ -273,15 +367,16 @@
          (printout t ?*escribe_respuesta*)
          (bind ?tipo (read))
 		 (printout t "" crlf)
-         (if (eq ?tipo 1)
+         (if (= ?tipo 1)
 		    then
 			   (bind ?tipo Extension)
 			else
 			   (bind ?tipo Regleta)
 		 )
-         (assert (EXTENSION (v_existe ?valor) (v_tipo ?tipo)))
+         (assert (EXTENSION (v_existe Si) (v_tipo ?tipo)))
          (assert (extension-bien-conectada))
       else
+	     (assert (EXTENSION (v_existe No)))
          (assert (cable-poder))
 		 (assert (sin-extension))
    )
@@ -362,7 +457,7 @@
    (printout t "R// POSIBLE CAUSA, REGLETA APAGADA" crlf)
    (printout t "ACTIVE SU REGLETA E INTENTE DE NUEVO" crlf)
    (modify  ?enciende (v_enciende Si))
-   (bind ?*mensaje* "LA REGLETA NO ESTABA ENCENDIDA")
+   (bind ?*mensaje* LA REGLETA NO ESTABA ENCENDIDA)
    (retract ?hecho)
    (retract ?hecho_extension)
    (retract ?hecho_actual)
@@ -392,7 +487,7 @@
 ; ========== SOLUCION ==========
 (defrule CABLE-PODER-MAL-CONECTADO
    ?hecho <- (cable-poder-mal-conectado)
-   ?hecho_extension <- (EXTENSION (v_tipo ?tipo))
+   ?hecho_extension <- (EXTENSION (v_existe ?existe))
    ?hecho_actual <- (EQUIPO (v_enciende No))
    ?arranque <- (arranque)
    ?enciende <- (ENCIENDE (v_enciende No))
@@ -400,7 +495,7 @@
    (printout t "R// POSIBLE CAUSA, CABLE DE PODER MAL CONECTADO" crlf)
    (printout t "CORRIJA EL PROBLEMA E INTENTE DE NUEVO" crlf)
    (modify  ?enciende (v_enciende Si))
-   (bind ?*mensaje* "EL CABLE DE LA FUENTE DE PODER NO ESTABA BIEN CONECTADO")
+   (bind ?*mensaje* EL CABLE DE LA FUENTE DE PODER NO ESTABA BIEN CONECTADO)
    (retract ?hecho)
    (retract ?hecho_extension)
    (retract ?hecho_actual)
@@ -497,7 +592,7 @@
 		 (printout t "CAMBIA PERMANENTEMENTE TU EQUIPO DE LUGAR E INTENTA DE NUEVO" crlf)
 	     (printout t "R// POSIBLE CAUSA, PUNTO DE ACC SIN ELECTRICIDAD" crlf)
          (modify  ?enciende (v_enciende Si))
-         (bind ?*mensaje* "EL PUNTO DE CONEXION ACC TIENE PROBLEMAS DE CORRIENTE" crlf)
+         (bind ?*mensaje* EL PUNTO DE CONEXION ACC TIENE PROBLEMAS DE CORRIENTE)
          (retract ?hecho)
          (retract ?hecho_actual)
          (retract ?arranque)
@@ -569,7 +664,7 @@
 		 (printout t "CAMBIA PERMANENTEMENTE EL CABLE E INTENTA DE NUEVO" crlf)
 	     (printout t "R// POSIBLE CAUSA, CABLE DE PODER AVERIADO" crlf)
          (modify  ?enciende (v_enciende Si))
-         (bind ?*mensaje* "EL CABLE DE LA FUENTE ESTABA AVERIADO")
+         (bind ?*mensaje* EL CABLE DE LA FUENTE ESTABA AVERIADO)
          (retract ?hecho)
          (retract ?hecho_actual)
          (retract ?arranque)
@@ -640,7 +735,7 @@
 	     (printout t "RETIRE LOS DISPOSITIVOS E INTENTE DE NUEVO" crlf)
 		 (printout t "R// POSIBLE CAUSA, AMBIGUEDAD EN EL ARRANQUE DE LA BIOS" crlf)
          (modify ?hecho_arranca (v_arranca Si))
-         (bind ?*mensaje* "UN DISPOSITIVO EXTERNO PRODUJO UN MAL ARRANQUE EN TU EQUIPO" crlf)
+         (bind ?*mensaje* UN DISPOSITIVO EXTERNO PRODUJO UN MAL ARRANQUE EN TU EQUIPO)
          (retract ?hecho_actual)
          (retract ?arranque)
          (assert (arranque))
@@ -754,6 +849,64 @@
 	     (assert (windows-trabaja-lento))
    )
    (retract ?hecho)
+)
+
+(defrule WINDOWS-TRABAJA-LENTO-FIN1
+   (windows-trabaja-lento)
+   (or (or (EQUIPO (v_bios_demora Si))
+       (EQUIPO (v_disco_duro_ruidoso Si)))
+	   (EQUIPO (v_scandisk Si)))
+=>
+   (printout t "NOTAS QUE TU EQUIPO TRABAJA CON MUCHA LENTITUD?" crlf)
+   (RESP_SI_NO nil)
+   (bind ?valor (ASIGNA_RESP (read)))
+   (printout t "" crlf)
+   (if (eq ?valor Si)
+      then
+         (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. POSIBLES PROBLEMAS CON EL DISCO DURO, MUY PROBABLE" crlf)
+         (printout t "   2. SECTORES DAÑADOS EN EL DISCO DURO, POCO PROBABLE" crlf)
+	  else
+	     (printout t "R// TIENES PROBLEMA CON EL DISCO DURO:" crlf)
+		 (printout t "    LOS PROBLEMAS SON POCO GRAVES SIN EMBARGO" crlf)
+         (printout t "    TE RECOMENDAMOS SOLICITAR UN CHEQUEO BASICO" crlf)
+   )
+   (PUBLICIDAD nil)
+   (DESPEDIDA nil)
+   (assert (fin))
+   ;(reset)
+)
+
+(defrule WINDOWS-TRABAJA-LENTO-FIN2
+   (windows-trabaja-lento)
+   (or (or (EQUIPO (v_bios_demora No))
+       (EQUIPO (v_disco_duro_ruidoso No)))
+	   (EQUIPO (v_scandisk No)))
+=>
+   (printout t "NOTAS QUE TU EQUIPO TRABAJA CON MUCHA LENTITUD?" crlf)
+   (RESP_SI_NO nil)
+   (bind ?valor (ASIGNA_RESP (read)))
+   (printout t "" crlf)
+   (if (eq ?valor Si)
+      then
+         (printout t "R// TIENES UNO DE 2 POSIBLES PROBLEMAS:" crlf)
+		 (printout t "   1. TU EQUIPO ESTA INFECTADO, MUY PROBABLE" crlf)
+         (printout t "   2. EL MOTHER BOARD DE TU EQUIPO ESTA FALLANDO, POCO PROBABLE" crlf)
+	  else
+	     (printout t "R// CREO QUE TUS PROBLEMAS SON APLICATIVOS:" crlf)
+		 (printout t "    ANOTA LA APLICACION QUE TE PRODUCE PROBLEMAS Y SOLICITA" crlf)
+         (printout t "    LA REINSTALACION O BIEN PIDE CONSULTORIA" crlf)
+   )
+   (PUBLICIDAD nil)
+   (DESPEDIDA nil)
+   (assert (fin))
+   ;(reset)
+)
+
+(defrule FIN
+   (fin)
+=>
+   (clear)
 )
 
 (defrule WINDOWS-CARGA-CONGELADO
@@ -960,7 +1113,7 @@
       then
          (bind ?tipo "PC de Escritorio")
    )
-   (printout t "EN OCASIONES ANTERIORES, NOTO LENTITUD AL USAR EL EQUIPO" ?tipo "," crlf)
+   (printout t "EN OCASIONES ANTERIORES, NOTO LENTITUD AL USAR EL EQUIPO " ?tipo "," crlf)
    (printout t "Y ESA LENTITUD VENINA ACOMPANADA DE REPENTINAS PANTALLAS AZULES" crlf)
    (printout t "QUE OBLIGABAN A REINICIAR EL EQUIPO?" crlf)
    (RESP_SI_NO nil)
