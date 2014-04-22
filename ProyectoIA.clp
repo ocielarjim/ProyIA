@@ -96,7 +96,6 @@
 
 (deffunction DESPEDIDA
    (?valor)
-=>
    (printout t "GRACIAS POR USAR NUESTRO SISTEMA" crlf "SALUDOS" crlf)
    (printout t "=================================================================" crlf)
 )
@@ -134,7 +133,7 @@
       then
 	     (bind ?tipo Portatil)
 	  else
-	     (bind ?tipo PC Escritorio)
+	     (bind ?tipo PC_Escritorio)
    )
    (printout t "" crlf)
    (printout t "TU EQUIPO ENCIENDE?" crlf)
@@ -149,7 +148,7 @@
 ; ==================================================
 (defrule EQUIPO-ESCRITORIO
    ?hecho <- (inicia-validacion)
-   ?hecho_actual <- (EQUIPO (v_tipo Escritorio) (v_enciende No))
+   ?hecho_actual <- (EQUIPO (v_tipo PC_Escritorio) (v_enciende No))
 =>
    (printout t "UTILIZA ALGUNA EXTENSION O REGLETA?" crlf)
    (RESP_SI_NO nil)
@@ -244,7 +243,7 @@
    ?hecho <- (cargador-no-conectado)
    ?hecho_actual <- (EQUIPO (v_tipo Portatil) (v_enciende No) (v_bateria_funciona Si) (v_bateria_sin_carga Si))
    ?arranque <- (arranque)
-   ?enciende <- (ENCIENDE (v_enciende ?v_enc))
+   ?enciende <- (ENCIENDE (v_enciende No))
 =>
    (printout t "R// POSIBLE CAUSA, REQUIERE CARGADOR" crlf)
    (printout t "CONECTE CARGADOR E INTENTE DE NUEVO" crlf)
@@ -317,9 +316,9 @@
    ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
    ?hecho_extension <- (EXTENSION (v_tipo ?etipo))
    ?arranque <- (arranque)
-   ?enciende <- (ENCIENDE (v_enciende ?venc))
+   ?enciende <- (ENCIENDE (v_enciende No))
 =>
-   (if (eq ?tipo Escritorio)
+   (if (eq ?tipo PC_Escritorio)
       then
          (bind ?tipo "PC de Escritorio")
    )
@@ -358,7 +357,7 @@
    ?hecho_extension <- (EXTENSION (v_tipo Regleta))
    ?hecho_actual <- (EQUIPO (v_enciende No))
    ?arranque <- (arranque)
-   ?enciende <- (ENCIENDE (v_enciende ?venc))
+   ?enciende <- (ENCIENDE (v_enciende No))
 =>
    (printout t "R// POSIBLE CAUSA, REGLETA APAGADA" crlf)
    (printout t "ACTIVE SU REGLETA E INTENTE DE NUEVO" crlf)
@@ -396,7 +395,7 @@
    ?hecho_extension <- (EXTENSION (v_tipo ?tipo))
    ?hecho_actual <- (EQUIPO (v_enciende No))
    ?arranque <- (arranque)
-   ?enciende <- (ENCIENDE (v_enciende ?venc))
+   ?enciende <- (ENCIENDE (v_enciende No))
 =>
    (printout t "R// POSIBLE CAUSA, CABLE DE PODER MAL CONECTADO" crlf)
    (printout t "CORRIJA EL PROBLEMA E INTENTE DE NUEVO" crlf)
@@ -420,6 +419,7 @@
    (printout t "(POR EJEMPLO: UN RADIO, UN CARGADOR DE CELULAR, ETC)" crlf)
    (RESP_SI_NO nil)
    (bind ?valor (ASIGNA_RESP (read)))
+   (printout t "" crlf)
    (if (eq ?valor No)
       then
 	     (printout t "POR FAVOR, INTENTA CONECTAR OTRO DISPOSITVO, (POR EJEMPLO: PON A CARGAR TU CELULAR)" crlf)
@@ -429,7 +429,6 @@
    )
    (retract ?hecho1)
    (retract ?hecho2)
-   (printout t "" crlf)
 )
 
 (defrule CONECTAR-OTRO-DISPOSITIVO-CON-E "Utilizando regleta o extension"
@@ -454,31 +453,32 @@
 (defrule CONECTA-OTRO-DISPOSITIVO
    ?hecho <- (conecta-otro-dispositivo)
 =>
-   (printout t "QUE DISPOSITIVO CONECTASTE?" crlf)
+   (printout t "QUE DISPOSITIVO CONECTASTE? ")
    (bind ?dispositivo (read))
-   (printout t "El " ?dispositivo " FUNCIONO? (Si/No)" crlf)
-   (bind ?funciona (read))
    (printout t "" crlf)
-   (if (eq ?funciona Si)
+   (printout t "El " ?dispositivo " FUNCIONO?" crlf)
+   (RESP_SI_NO nil)
+   (bind ?valor (ASIGNA_RESP (read)))
+   (printout t "" crlf)
+   (if (eq ?valor Si)
       then
 	     (assert (otro-dispositivo-funciona))
 	  else
          (assert (punto-sin-electricidad))
    )
    (retract ?hecho)
-   (printout t "" crlf)
 )
 
 (defrule PUNTO-SIN-ELECTRICIDAD "Punto de corriente sin electricidad"
    ?hecho <- (punto-sin-electricidad)
    ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
    ?arranque <- (arranque)
-   ?enciende <- (ENCIENDE (v_enciende ?venc))
+   ?enciende <- (ENCIENDE (v_enciende No))
 =>
    (printout t "CREO QUE EL PROBLEMA ESTA EN EL PUNTO DE CORRIENTE" crlf)
    (printout t "MUEVE TODO TU EQUIPO A OTRO PUNTO DE CORRIENTE E INTENALO DE NUEVO" crlf)
    (printout t "SABEMOS QUE PUEDE SER UNA TAREA DIFICIL" crlf)
-   (printout t "TOMATE TU TIEMPO..., Y ESCRIBE OK AL HABER CULMINADO ESTA ACCION" crlf)
+   (printout t "TOMATE TU TIEMPO..., Y ESCRIBE OK AL HABER CULMINADO ESTA ACCION:")
    (read)
    (printout t "" crlf)
    (printout t "GRACIAS POR INTENTARLO" crlf)
@@ -513,11 +513,10 @@
    (if (eq ?tipo Portatil)
       then
 	     (assert (cable-poder-averiado))
-;	  else
-;        PROGRAMAR EN CASO DE SER PC DE ESCRITORIO
+	  else
+         (assert (cable-poder-averiado))
    )
-;   (reset)
-;   (assert (initial-fact))
+   (retract ?hecho)
 )
 
 ; =============================
@@ -548,11 +547,12 @@
    ?hecho <- (cable-poder-funciona)
    ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
    ?arranque <- (arranque)
-   ?enciende <- (ENCIENDE (v_enciende ?venc))
+   ?enciende <- (ENCIENDE (v_enciende No))
 =>
    (printout t "REMPLAZA EL CABLE DE PODER E INTENTA VER QUE SUCEDE" crlf)
-   (printout t "TOMATE TU TIEMPO..., Y ESCRIBE OK AL HABER CULMINADO ESTA ACCION" crlf)
+   (printout t "TOMATE TU TIEMPO..., Y ESCRIBE OK AL HABER CULMINADO ESTA ACCION:")
    (read)
+   (printout t "" crlf)
    (printout t "GRACIAS POR INTENTARLO" crlf)
    (printout t "OBTUBISTE EL MISMO RESULTADO AL INTENTAR CON OTRO CABLE DE PODER?" crlf)
    (RESP_SI_NO nil)
@@ -956,7 +956,7 @@
    ?hecho <- (lentitud-equipo)
    ?hecho_actual <- (EQUIPO (v_tipo ?tipo) (v_disco_duro_ruidoso Si))
 =>
-   (if (eq ?tipo Escritorio)
+   (if (eq ?tipo PC_Escritorio)
       then
          (bind ?tipo "PC de Escritorio")
    )
@@ -983,7 +983,7 @@
    ?hecho <- (lentitud-equipo)
    ?hecho_actual <- (EQUIPO (v_tipo ?tipo) (v_disco_duro_ruidoso No))
 =>
-   (if (eq ?tipo Escritorio)
+   (if (eq ?tipo PC_Escritorio)
       then
          (bind ?tipo "PC de Escritorio")
    )
@@ -1011,7 +1011,7 @@
    ?hecho2 <- (problema-procesador)
    ?hecho_actual <- (EQUIPO (v_tipo ?tipo))
 =>
-   (if (eq ?tipo Escritorio)
+   (if (eq ?tipo PC_Escritorio)
       then
          (bind ?tipo "PC de Escritorio")
    )
@@ -1041,11 +1041,11 @@
    ?hecho <- (problema-bios)
    ?hecho_actual <- (EQUIPO (v_pantalla_enciende No))
 =>
-- La pantalla enciende pero deja un fondo oscuro y no muestra imagen? <NO>
-   (printout t "LA PANTALLA ENCIENDE, PERO DEJA UN FONDO OSCURO Y NO MUESTRA IMAGEN? (Si/No)" crlf)
-   (bind ?pantalla_oscura (read))
+   (printout t "LA PANTALLA ENCIENDE, PERO DEJA UN FONDO OSCURO Y NO MUESTRA IMAGEN?" crlf)
+   (RESP_SI_NO nil)
+   (bind ?valor (ASIGNA_RESP (read)))
    (printout t "" crlf)
-   (if (eq ?pantalla_oscura No)
+   (if (eq ?valor No)
       then
          (assert (pantalla-no-enciende))
       else
@@ -1173,7 +1173,7 @@
 
 (defrule PRUEBAS-MONITOR-ESCRITORIO
    ?hecho <- (pruebas-monitor)
-   ?hecho_actual <- (EQUIPO (v_tipo Escritorio))
+   ?hecho_actual <- (EQUIPO (v_tipo PC_Escritorio))
 =>
    (assert (cable-poder-monitor))
    (retract ?hecho)
@@ -1254,16 +1254,8 @@
 (defrule EQUIPO-ENCIENDE
    (EQUIPO (v_enciende Si))
    (ENCIENDE (v_enciende Si))
-; (CORREGIDO ?corregido&:(= 1 ?*corregido*))
 =>
    (printout t ?*mensaje* crlf)
    (DESPEDIDA nil)
 ; (reset)
 )
-
-;(defrule DESPEDIDA
-;   (despedida)
-;=>
-;   (printout t "GRACIAS POR USAR NUESTRO SISTEMA" crlf "SALUDOS" crlf)
-;   (printout t "=================================================================" crlf)
-;)
